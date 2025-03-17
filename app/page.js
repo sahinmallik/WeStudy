@@ -28,11 +28,30 @@ export default function Home() {
       <section className="pt-36 md:pt-48 pb-10">
         <div className="space-y-6 text-center">
           <div className="space-y-6 mx-auto">
-            <Badge variant="outline" className="p-2">
-              <p style={{ fontSize: "13px" }}>
-                🎉 New features will be added soon. Please stay tuned.
-              </p>
-            </Badge>
+            <button className="bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6  text-white inline-block">
+              <span className="absolute inset-0 overflow-hidden rounded-full">
+                <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              </span>
+              <div className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-0.5 px-4 ring-1 ring-white/10 ">
+                <span>🎉 New feature will be added soon!!</span>
+                <svg
+                  fill="none"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M10.75 8.75L14.25 12L10.75 15.25"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
+                  />
+                </svg>
+              </div>
+              <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-emerald-400/90 to-emerald-400/0 transition-opacity duration-500 group-hover:opacity-40" />
+            </button>
             <h2 className="text-4xl lg:text-6xl md:text-5xl xl:text-7xl bg-gradient-to-b from-gray-400 via-gray-200 to-gray-600 bg-clip-text text-transparent font-extrabold gradient tracking-tighter pb-2 pr-2">
               <Cover>WeStudy</Cover> <br />
               Collaborative Learning Platform.

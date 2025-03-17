@@ -1,5 +1,25 @@
+"use client";
+
 import React from "react";
-import { ChevronRight, GalleryVerticalEnd, SquarePen } from "lucide-react";
+import { SignOutButton, UserButton, useUser } from "@clerk/nextjs";
+import {
+  BookOpen,
+  Bot,
+  Folder,
+  Forward,
+  Frame,
+  LayoutDashboard,
+  Map,
+  MoreHorizontal,
+  NotebookPen,
+  PieChart,
+  Settings2,
+  SquareTerminal,
+  Trash2,
+  Notebook,
+  ChevronUp,
+  User2,
+} from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -8,155 +28,202 @@ import {
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Button } from "./ui/button";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 // This is sample data.
 const data = {
-  versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
-  navMain: [
+  projects: [
     {
-      title: "Home",
+      name: "Design Engineering",
       url: "#",
-      items: [],
+      icon: Frame,
     },
     {
-      title: "Subjects",
+      name: "Sales & Marketing",
       url: "#",
-      items: [
-        {
-          title: "ACA",
-          url: "#",
-        },
-        {
-          title: "Blockchain",
-          url: "#",
-        },
-      ],
+      icon: PieChart,
     },
     {
-      title: "API Reference",
+      name: "Travel",
       url: "#",
-      items: [
-        {
-          title: "Components",
-          url: "#",
-        },
-        {
-          title: "File Conventions",
-          url: "#",
-        },
-        {
-          title: "Functions",
-          url: "#",
-        },
-        {
-          title: "next.config.js Options",
-          url: "#",
-        },
-        {
-          title: "CLI",
-          url: "#",
-        },
-        {
-          title: "Edge Runtime",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Architecture",
-      url: "#",
-      items: [
-        {
-          title: "Accessibility",
-          url: "#",
-        },
-        {
-          title: "Fast Refresh",
-          url: "#",
-        },
-        {
-          title: "Next.js Compiler",
-          url: "#",
-        },
-        {
-          title: "Supported Browsers",
-          url: "#",
-        },
-        {
-          title: "Turbopack",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Community",
-      url: "#",
-      items: [
-        {
-          title: "Contribution Guide",
-          url: "#",
-        },
-      ],
+      icon: Map,
     },
   ],
 };
 
 export function AppSidebar(props) {
+  const { user } = useUser();
+  if (!user) {
+    return null;
+  }
+
   return (
-    <Sidebar {...props}>
+    <Sidebar {...props} variant="floating">
       <SidebarHeader>
         <SidebarMenu className="flex">
           <SidebarMenuItem className="w-auto p-4">
+            <Link href="/">
+              <Image
+                src="/logo.png"
+                width={120}
+                height={100}
+                className="h-10 py-1 w-auto object-contain"
+                alt="WeStudy Logo"
+                style={{ marginBottom: "30px" }}
+              />
+            </Link>
             <div className="flex justify-end mb-5">
-              <Button varient="outline">
-                <SquarePen className="h-4 w-4" />
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button style={{ padding: "20px" }}>
+                      <NotebookPen style={{ width: "20px", height: "20px" }} />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Create Subject</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        {/* We create a collapsible SidebarGroup for each parent. */}
-        {data.navMain.map((item, index) => (
-          <Collapsible key={item.title} className="group/collapsible">
-            <SidebarGroup>
-              <SidebarGroupLabel
+        <SidebarGroup>
+          <SidebarGroupLabel>Platform</SidebarGroupLabel>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <Link href="/dashboard">
+                <SidebarMenuButton>
+                  <LayoutDashboard className="text-sidebar-foreground/70" />{" "}
+                  Dashboard
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            {/* {data.navMain.map((item) => (
+              <Collapsible
+                key={item.title}
                 asChild
-                className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                defaultOpen={item.isActive}
+                className="group/collapsible"
               >
-                <CollapsibleTrigger className="flex w-full items-center justify-between">
-                  {item.title}
-                  <ChevronRight className="h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
-                </CollapsibleTrigger>
-              </SidebarGroupLabel>
-              <CollapsibleContent>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {item.items.map((subItem) => (
-                      <SidebarMenuItem key={subItem.title}>
-                        <SidebarMenuButton asChild isActive={subItem.isActive}>
-                          <a href={subItem.url}>{subItem.title}</a>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </CollapsibleContent>
-            </SidebarGroup>
-          </Collapsible>
-        ))}
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton tooltip={item.title}>
+                      {item.icon && <item.icon />}
+                      <span>{item.title}</span>
+                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {item.items?.map((subItem) => (
+                        <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubButton asChild>
+                            <a href={subItem.url}>
+                              <span>{subItem.title}</span>
+                            </a>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+            ))} */}
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel>Subjects</SidebarGroupLabel>
+          <SidebarMenu>
+            {data.projects.map((item) => (
+              <SidebarMenuItem key={item.name}>
+                <SidebarMenuButton asChild>
+                  <a href={item.url}>
+                    <Notebook />
+                    <span>{item.name}</span>
+                  </a>
+                </SidebarMenuButton>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <SidebarMenuAction showOnHover>
+                      <MoreHorizontal />
+                      <span className="sr-only">More</span>
+                    </SidebarMenuAction>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    className="w-48 rounded-lg"
+                    side="bottom"
+                    align="end"
+                  >
+                    <DropdownMenuItem className="space-x-3">
+                      <Folder className="text-muted-foreground w-4 h-4" />
+                      <span>View Subject</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="space-x-3">
+                      <Trash2 className="text-muted-foreground w-4 h-4" />
+                      <span>Delete Subject</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
-      <SidebarRail />
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton>
+                  <User2 /> {user.fullName}
+                  <ChevronUp className="ml-auto" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                side="top"
+                className="w-[--radix-popper-anchor-width]"
+              >
+                <DropdownMenuItem>
+                  <SignOutButton />
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

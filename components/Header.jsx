@@ -3,8 +3,10 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { LayoutDashboard } from "lucide-react";
+import { checkUser } from "@/lib/checkUser";
 
-export default function Header() {
+export default async function Header() {
+  await checkUser();
   return (
     <header className="fixed top-0 backdrop-blur-md bg-backgroud/80 w-full z-100 supports[backdrop-filter]:bg-background/60 border-b">
       <nav className="flex justify-between items-center px-4 h-16">
