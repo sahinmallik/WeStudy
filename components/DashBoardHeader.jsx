@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LayoutDashboard, Sun } from "lucide-react";
+import { LayoutDashboard, Search, Sun } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -23,26 +23,30 @@ const DashBoardHeader = () => {
         <Separator orientation="vertical" className="mr-2 h-4" />
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem>
+            <BreadcrumbItem className="hidden md:block">
               <BreadcrumbLink href="/dashboard" className="text-lg font-medium">
                 Dashboard
               </BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator />
+            <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>
               <BreadcrumbPage className="text-lg">Overview</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-
       <div className="flex items-center gap-2">
-        <div className="relative w-64">
-          <Input
-            type="text"
-            placeholder="Search..."
-            className="pl-3 pr-12 h-9 rounded-md"
-          />
+        <div className="w-full space-y-2 hidden md:flex">
+          <Button
+            variant="outline"
+            className="relative h-9 w-full justify-start rounded-[0.5rem] bg-background text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-40 lg:w-64"
+          >
+            <Search className="mr-2 h-4 w-4" />
+            <span>Search...</span>
+            <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.3rem] hidden h-6 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+              <span className="text-xs">⌘</span>K
+            </kbd>
+          </Button>
         </div>
 
         {/* <Avatar className="h-8 w-8 ml-2">
