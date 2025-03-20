@@ -62,12 +62,12 @@ export default function Home() {
             </p>
           </div>
           <div className="space-x-4">
-            <Link href="/dashboard">
+            <Link href="/dashboard/overview">
               <Button className="px-8" size="lg">
                 Get Started
               </Button>
             </Link>
-            <Link href="/dashboard">
+            <Link href="/dashboard/overview">
               <Button variant="outline" size="lg" className="px-8">
                 See Demo
               </Button>
@@ -172,7 +172,7 @@ export default function Home() {
             Start your journey to success with WeStudy.
           </p>
           <div className="flex justify-center items-center">
-            <Link href={"/dashboard"} passHref>
+            <Link href={"/dashboard/overview"} passHref>
               <Button
                 variant="secondary"
                 size="lg"

@@ -20,7 +20,7 @@ export default async function Header() {
           />
         </Link>
         <div className="flex items-center space-x-3">
-          <Link href="/dashboard" className="opacity-0 lg:opacity-100">
+          <Link href="/dashboard/overview" className="opacity-0 lg:opacity-100">
             <Button variant="outline">
               <LayoutDashboard /> Dashboard
             </Button>
