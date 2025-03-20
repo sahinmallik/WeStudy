@@ -110,9 +110,11 @@ export function AppSidebar(props) {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button style={{ padding: "20px" }}>
-                      <BookOpen style={{ width: "20px", height: "20px" }} />
-                    </Button>
+                    <Link href="/dashboard/create-subject">
+                      <Button style={{ padding: "15px" }}>
+                        <BookOpen style={{ width: "20px", height: "20px" }} />
+                      </Button>
+                    </Link>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Create Subject</p>

@@ -25,6 +25,11 @@ const DashBoardHeader = () => {
     <header className="flex items-center justify-between h-14 px-4 border-b bg-background">
       <div className="flex items-center gap-2">
         <SidebarTrigger className="w-10 h-10" />
+        <Separator
+          orientation="vertical"
+          className="mr-2 h-2"
+          style={{ height: "16px" }}
+        />
         <Breadcrumb>
           <BreadcrumbList className="hidden sm:flex">
             <BreadcrumbItem>
