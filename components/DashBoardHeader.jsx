@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LayoutDashboard, Search, Sun } from "lucide-react";
+import { LayoutDashboard, Menu, Search, Sun } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,25 +14,42 @@ import {
 import { Separator } from "./ui/separator";
 import { SidebarTrigger } from "./ui/sidebar";
 import { UserButton } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const DashBoardHeader = () => {
+  const pathname = usePathname();
+  const paths = pathname.split("/").filter(Boolean);
+  const lastPath = paths.length > 0 ? paths[paths.length - 1] : "Dashboard";
   return (
     <header className="flex items-center justify-between h-14 px-4 border-b bg-background">
-      <div className="flex items-center gap-4">
-        <SidebarTrigger className="h-5 w-5" />
-        <Separator orientation="vertical" className="mr-2 h-4" />
+      <div className="flex items-center gap-2">
+        <SidebarTrigger className="w-5 h-5" />
         <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="/dashboard" className="text-lg font-medium">
-                Dashboard
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator className="hidden md:block" />
-            <BreadcrumbItem>
-              <BreadcrumbPage className="text-lg">Overview</BreadcrumbPage>
-            </BreadcrumbItem>
+          <BreadcrumbList className="hidden sm:flex">
+            {paths.map((path, index) => {
+              const url = `/${paths.slice(0, index + 1).join("/")}`;
+              return (
+                <BreadcrumbItem key={index}>
+                  <Link
+                    href={path === "dashboard" ? "/dashboard/overview" : url}
+                  >
+                    <BreadcrumbLink
+                      className={
+                        index === paths.length - 1 ? "font-medium" : ""
+                      }
+                    >
+                      {path.charAt(0).toUpperCase() + path.slice(1)}
+                    </BreadcrumbLink>
+                  </Link>
+                  {index < paths.length - 1 && <BreadcrumbSeparator />}
+                </BreadcrumbItem>
+              );
+            })}
           </BreadcrumbList>
+          <span className="md:hidden font-medium">
+            {lastPath.charAt(0).toUpperCase() + lastPath.slice(1)}
+          </span>
         </Breadcrumb>
       </div>
       <div className="flex items-center gap-2">
