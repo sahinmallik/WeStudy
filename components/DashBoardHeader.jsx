@@ -22,9 +22,9 @@ const DashBoardHeader = () => {
   const paths = pathname.split("/").filter(Boolean);
   const lastPath = paths.length > 0 ? paths[paths.length - 1] : "Dashboard";
   return (
-    <header className="flex items-center justify-between h-14 px-4 border-b bg-background">
+    <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
       <div className="flex items-center gap-2">
-        <SidebarTrigger className="w-10 h-10" />
+        <SidebarTrigger className="-ml-1" />
         <Breadcrumb>
           <BreadcrumbList className="hidden sm:flex">
             <BreadcrumbItem>
