@@ -24,9 +24,15 @@ const DashBoardHeader = () => {
   return (
     <header className="flex items-center justify-between h-14 px-4 border-b bg-background">
       <div className="flex items-center gap-2">
-        <SidebarTrigger className="w-5 h-5" />
+        <SidebarTrigger className="w-10 h-10" />
         <Breadcrumb>
           <BreadcrumbList className="hidden sm:flex">
+            <BreadcrumbItem>
+              <Link href="/">
+                <BreadcrumbLink>Home</BreadcrumbLink>
+              </Link>
+              <BreadcrumbSeparator />
+            </BreadcrumbItem>
             {paths.map((path, index) => {
               const url = `/${paths.slice(0, index + 1).join("/")}`;
               return (
@@ -47,7 +53,7 @@ const DashBoardHeader = () => {
               );
             })}
           </BreadcrumbList>
-          <span className="md:hidden font-medium">
+          <span className="sm:hidden font-medium">
             {lastPath.charAt(0).toUpperCase() + lastPath.slice(1)}
           </span>
         </Breadcrumb>

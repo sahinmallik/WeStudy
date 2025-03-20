@@ -19,6 +19,7 @@ import {
   Notebook,
   ChevronUp,
   User2,
+  Book,
 } from "lucide-react";
 import {
   Collapsible,
@@ -58,6 +59,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { usePathname } from "next/navigation";
 
 // This is sample data.
 const data = {
@@ -86,6 +88,9 @@ export function AppSidebar(props) {
     return null;
   }
 
+  const pathName = usePathname();
+  const paths = pathName.split("/").filter(Boolean);
+  const lastPath = paths.length == 2 ? paths[1] : " ";
   return (
     <Sidebar {...props} variant="floating">
       <SidebarHeader>
@@ -106,7 +111,7 @@ export function AppSidebar(props) {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button style={{ padding: "20px" }}>
-                      <NotebookPen style={{ width: "20px", height: "20px" }} />
+                      <BookOpen style={{ width: "20px", height: "20px" }} />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -123,10 +128,17 @@ export function AppSidebar(props) {
           <SidebarGroupLabel>Platform</SidebarGroupLabel>
           <SidebarMenu>
             <SidebarMenuItem>
-              <Link href="/dashboard">
-                <SidebarMenuButton>
+              <Link href="/dashboard/overview">
+                <SidebarMenuButton isActive={lastPath === "overview"}>
                   <LayoutDashboard className="text-sidebar-foreground/70" />{" "}
                   Dashboard
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <Link href="/dashboard/subjects">
+                <SidebarMenuButton isActive={lastPath === "subjects"}>
+                  <Book className="text-sidebar-foreground/70" /> Subjects
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
@@ -170,7 +182,7 @@ export function AppSidebar(props) {
               <SidebarMenuItem key={item.name}>
                 <SidebarMenuButton asChild>
                   <a href={item.url}>
-                    <Notebook />
+                    <BookOpen />
                     <span>{item.name}</span>
                   </a>
                 </SidebarMenuButton>
