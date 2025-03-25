@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { SignOutButton, UserButton, useUser } from "@clerk/nextjs";
 import {
   BookOpen,
@@ -20,6 +20,7 @@ import {
   ChevronUp,
   User2,
   Book,
+  Loader2,
 } from "lucide-react";
 import {
   Collapsible,
@@ -60,27 +61,11 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { usePathname } from "next/navigation";
+import { createSubject } from "@/action/subject";
+import useFetch from "@/hooks/createSubject";
+import { getSubjects } from "@/action/getSubjects";
 
 // This is sample data.
-const data = {
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-};
 
 export function AppSidebar(props) {
   const { user } = useUser();
@@ -91,6 +76,25 @@ export function AppSidebar(props) {
   const pathName = usePathname();
   const paths = pathName.split("/").filter(Boolean);
   const lastPath = paths.length == 2 ? paths[1] : " ";
+
+  const {
+    loading: updateLoading,
+    fn: getSubjectsFn,
+    data: subjects,
+  } = useFetch(getSubjects);
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        await getSubjectsFn();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchSubjects();
+  }, [pathName]);
+
   return (
     <Sidebar {...props} variant="floating">
       <SidebarHeader>
@@ -180,39 +184,55 @@ export function AppSidebar(props) {
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupLabel>Subjects</SidebarGroupLabel>
           <SidebarMenu>
-            {data.projects.map((item) => (
-              <SidebarMenuItem key={item.name}>
-                <SidebarMenuButton asChild>
-                  <a href={item.url}>
-                    <BookOpen />
-                    <span>{item.name}</span>
-                  </a>
-                </SidebarMenuButton>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <SidebarMenuAction showOnHover>
-                      <MoreHorizontal />
-                      <span className="sr-only">More</span>
-                    </SidebarMenuAction>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    className="w-48 rounded-lg"
-                    side="bottom"
-                    align="end"
-                  >
-                    <DropdownMenuItem className="space-x-3">
-                      <Folder className="text-muted-foreground w-4 h-4" />
-                      <span>View Subject</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="space-x-3">
-                      <Trash2 className="text-muted-foreground w-4 h-4" />
-                      <span>Delete Subject</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+            {updateLoading ? (
+              <SidebarMenuItem className="flex items-center justify-center">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               </SidebarMenuItem>
-            ))}
+            ) : subjects?.length > 0 ? (
+              subjects.map((subject) => (
+                <SidebarMenuItem key={subject.id}>
+                  <SidebarMenuButton asChild>
+                    <a href={`/dashboard/subject/${subject.id}`}>
+                      <BookOpen />
+                      <span>{subject.subjectName}</span>
+                    </a>
+                  </SidebarMenuButton>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <SidebarMenuAction showOnHover>
+                        <MoreHorizontal />
+                        <span className="sr-only">More</span>
+                      </SidebarMenuAction>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      className="w-48 rounded-lg"
+                      side="bottom"
+                      align="end"
+                    >
+                      <Link href={`/dashboard/subject/${subject.id}`}>
+                        <DropdownMenuItem className="space-x-3">
+                          <Folder className="text-muted-foreground w-4 h-4" />
+                          <span>View Subject</span>
+                        </DropdownMenuItem>
+                      </Link>
+                      <DropdownMenuSeparator />
+                      <Link href={`/dashboard/subject/${subject.id}`}>
+                        <DropdownMenuItem className="space-x-3">
+                          <Trash2 className="text-muted-foreground w-4 h-4" />
+                          <span>Delete Subject</span>
+                        </DropdownMenuItem>
+                      </Link>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </SidebarMenuItem>
+              ))
+            ) : (
+              <SidebarMenuItem className="flex items-center justify-center">
+                <p className="text-center text-muted-foreground">
+                  No subjects found.
+                </p>
+              </SidebarMenuItem>
+            )}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

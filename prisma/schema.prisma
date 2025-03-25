@@ -27,7 +27,7 @@ model Subject {
   subjectName String
   emails      String[]
   documents   String[]
-  videoUrl    String
+  videoUrl    String    @default("")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
