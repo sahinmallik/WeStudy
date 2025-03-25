@@ -46,7 +46,10 @@ export default function GlowingFormCard() {
   }, [updateResult, updateLoading]);
 
   return (
-    <div className="flex justify-center items-center min-h-screen py-10">
+    <div
+      className="flex justify-center items-center py-10"
+      style={{ height: "100%" }}
+    >
       <div className="flex justify-center items-center w-full max-w-md">
         <GridItem
           area=""
