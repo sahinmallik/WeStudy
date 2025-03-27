@@ -1,14 +1,13 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LayoutDashboard, Menu, Search, Sun } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "./ui/separator";
@@ -16,11 +15,35 @@ import { SidebarTrigger } from "./ui/sidebar";
 import { UserButton } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { getSubjectsById } from "@/action/getSubjectById";
+import useFetch from "@/hooks/createSubject";
+import { use, useEffect } from "react";
 
 const DashBoardHeader = () => {
   const pathname = usePathname();
   const paths = pathname.split("/").filter(Boolean);
   const lastPath = paths.length > 0 ? paths[paths.length - 1] : "Dashboard";
+  const id = paths.length > 2 ? paths[2] : null;
+
+  const {
+    data: subject,
+    loading: subjectsLoading,
+    fn: getSubjectsByIdFn,
+  } = useFetch(getSubjectsById);
+
+  useEffect(() => {
+    const fetchSubjectById = async () => {
+      try {
+        if (id) {
+          await getSubjectsByIdFn(id);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchSubjectById();
+  }, [id]);
+  console.log(subject);
   return (
     <header className="flex items-center justify-between h-14 px-4 border-b bg-background">
       <div className="flex items-center gap-2">
@@ -38,31 +61,51 @@ const DashBoardHeader = () => {
               </Link>
               <BreadcrumbSeparator />
             </BreadcrumbItem>
-            {paths.map((path, index) => {
-              const url = `/${paths.slice(0, index + 1).join("/")}`;
-              return (
-                <BreadcrumbItem key={index}>
-                  <Link
-                    href={path === "dashboard" ? "/dashboard/overview" : url}
-                  >
-                    <BreadcrumbLink
-                      className={
-                        index === paths.length - 1 ? "font-medium" : ""
-                      }
-                    >
-                      {path.charAt(0).toUpperCase() + path.slice(1)}
-                    </BreadcrumbLink>
+            {paths.length > 2 ? (
+              <>
+                <BreadcrumbItem>
+                  <Link href="/dashboard/overview">
+                    <BreadcrumbLink>Dashboard</BreadcrumbLink>
                   </Link>
-                  {index < paths.length - 1 && <BreadcrumbSeparator />}
+                  <BreadcrumbSeparator />
+                  <Link href={`/dashboard/subject/${id}`}>
+                    <BreadcrumbLink>{subject?.subjectName}</BreadcrumbLink>
+                  </Link>
                 </BreadcrumbItem>
-              );
-            })}
+              </>
+            ) : (
+              paths.map((path, index) => {
+                const url = `/${paths.slice(0, index + 1).join("/")}`;
+                return (
+                  <BreadcrumbItem key={index}>
+                    <Link
+                      href={path === "dashboard" ? "/dashboard/overview" : url}
+                    >
+                      <BreadcrumbLink
+                        className={
+                          index === paths.length - 1 ? "font-medium" : ""
+                        }
+                      >
+                        {path.charAt(0).toUpperCase() + path.slice(1)}
+                      </BreadcrumbLink>
+                    </Link>
+                    {index < paths.length - 1 && <BreadcrumbSeparator />}
+                  </BreadcrumbItem>
+                );
+              })
+            )}
           </BreadcrumbList>
+
+          {/* ✅ Mobile view breadcrumb */}
           <span className="sm:hidden font-medium">
-            {lastPath.charAt(0).toUpperCase() + lastPath.slice(1)}
+            {subject
+              ? subject?.subjectName.charAt(0).toUpperCase() +
+                subject?.subjectName.slice(1)
+              : lastPath.charAt(0).toUpperCase() + lastPath.slice(1)}
           </span>
         </Breadcrumb>
       </div>
+
       <div className="flex items-center gap-2">
         <div className="w-full space-y-2 hidden md:flex">
           <Button
@@ -76,15 +119,6 @@ const DashBoardHeader = () => {
             </kbd>
           </Button>
         </div>
-
-        {/* <Avatar className="h-8 w-8 ml-2">
-          <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-          <AvatarFallback>J</AvatarFallback>
-        </Avatar> */}
-
-        {/* <Button variant="ghost" size="icon" className="h-8 w-8 ml-1">
-          <Sun className="h-[1.2rem] w-[1.2rem]" />
-        </Button> */}
         <UserButton />
       </div>
     </header>
