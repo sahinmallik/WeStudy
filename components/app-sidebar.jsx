@@ -115,7 +115,10 @@ export function AppSidebar(props) {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Link href="/dashboard/create-subject">
-                      <Button style={{ padding: "15px" }}>
+                      <Button
+                        variant="ghost"
+                        className="text-amber-500 hover:text-amber-400 hover:bg-zinc-900 p-5"
+                      >
                         <BookOpen style={{ width: "20px", height: "20px" }} />
                       </Button>
                     </Link>
@@ -192,10 +195,10 @@ export function AppSidebar(props) {
               subjects.map((subject) => (
                 <SidebarMenuItem key={subject.id}>
                   <SidebarMenuButton asChild>
-                    <a href={`/dashboard/subject/${subject.id}`}>
+                    <Link href={`/dashboard/subject/${subject.id}`}>
                       <BookOpen />
-                      <span>{subject.subjectName}</span>
-                    </a>
+                      <span>{subject.code}</span>
+                    </Link>
                   </SidebarMenuButton>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

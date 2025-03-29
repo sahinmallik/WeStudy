@@ -25,6 +25,8 @@ export async function createSubject(data) {
         data: {
           subjectName: data.name,
           emails: [user.email],
+          code: data.code,
+          videoUrl: " ",
         },
       });
       return subject;

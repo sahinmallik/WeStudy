@@ -61,6 +61,19 @@ export default function GlowingFormCard() {
               className="flex flex-col gap-6"
             >
               <div>
+                <Label htmlFor="code">Subject Code</Label>
+                <Input
+                  id="code"
+                  type="text"
+                  {...register("code")}
+                  placeholder="Enter your subject Code"
+                  className="mt-2"
+                />
+                {errors.subjectName && (
+                  <p className="text-red-500">{errors.code.message}</p>
+                )}
+              </div>
+              <div>
                 <Label htmlFor="name">Subject Name</Label>
                 <Input
                   id="name"

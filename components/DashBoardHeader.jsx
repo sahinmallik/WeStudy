@@ -45,7 +45,10 @@ const DashBoardHeader = () => {
   }, [id]);
   console.log(subject);
   return (
-    <header className="flex items-center justify-between h-14 px-4 border-b bg-background">
+    <header
+      className="flex items-center justify-between h-14  border-b bg-background"
+      style={{ padding: "16px" }}
+    >
       <div className="flex items-center gap-2">
         <SidebarTrigger className="w-10 h-10" />
         <Separator
@@ -98,7 +101,7 @@ const DashBoardHeader = () => {
 
           {/* ✅ Mobile view breadcrumb */}
           <span className="sm:hidden font-medium">
-            {subject
+            {subject && paths.length > 2
               ? subject?.subjectName.charAt(0).toUpperCase() +
                 subject?.subjectName.slice(1)
               : lastPath.charAt(0).toUpperCase() + lastPath.slice(1)}
