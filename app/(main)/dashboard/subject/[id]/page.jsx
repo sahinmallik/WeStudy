@@ -26,6 +26,8 @@ import {
   File,
   Search,
   Loader2,
+  Menu,
+  ChevronDown,
 } from "lucide-react";
 import Link from "next/link";
 import { FileUpload } from "@/components/ui/file-upload";
@@ -40,6 +42,12 @@ import {
 import { getSubjectsById } from "@/action/getSubjectById";
 import useFetch from "@/hooks/createSubject";
 import Image from "next/image";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const SubjectDetailPage = ({ params }) => {
   const { id } = use(params);
@@ -49,6 +57,7 @@ const SubjectDetailPage = ({ params }) => {
     loading: subjectsLoading,
     fn: getSubjectsByIdFn,
   } = useFetch(getSubjectsById);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchSubjectById = async () => {
@@ -158,6 +167,29 @@ const SubjectDetailPage = ({ params }) => {
     ],
   };
 
+  // Function to handle tab change from dropdown
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+
+  // Get the current tab name for display
+  const getCurrentTabName = () => {
+    switch (activeTab) {
+      case "overview":
+        return "Overview";
+      case "students":
+        return "Students";
+      case "documents":
+        return "Documents";
+      case "upload":
+        return "Upload";
+      case "addStudent":
+        return "Add Student";
+      default:
+        return "Overview";
+    }
+  };
+
   return (
     <div
       className="p-3 sm:p-4 md:p-6 bg-zinc-950 text-zinc-100"
@@ -210,35 +242,104 @@ const SubjectDetailPage = ({ params }) => {
             onValueChange={setActiveTab}
             className="w-full"
           >
-            <div className="border-b border-zinc-800 mb-2">
-              <TabsList className="relative w-full flex overflow-x-auto scrollbar-hide py-2 px-0 bg-transparent">
+            {/* Mobile Tab Menu */}
+            <div className="md:hidden mb-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-between bg-zinc-800 border-zinc-700 text-zinc-100"
+                  >
+                    <div className="flex items-center">
+                      <Menu className="h-4 w-4 mr-2" />
+                      {getCurrentTabName()}
+                    </div>
+                    <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-full min-w-[200px] bg-zinc-800 border-zinc-700 text-zinc-100">
+                  <DropdownMenuItem
+                    className={`${
+                      activeTab === "overview"
+                        ? "bg-amber-600 text-zinc-950"
+                        : ""
+                    }`}
+                    onClick={() => handleTabChange("overview")}
+                  >
+                    Overview
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className={`${
+                      activeTab === "students"
+                        ? "bg-amber-600 text-zinc-950"
+                        : ""
+                    }`}
+                    onClick={() => handleTabChange("students")}
+                  >
+                    Students
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className={`${
+                      activeTab === "documents"
+                        ? "bg-amber-600 text-zinc-950"
+                        : ""
+                    }`}
+                    onClick={() => handleTabChange("documents")}
+                  >
+                    Documents
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className={`${
+                      activeTab === "upload" ? "bg-amber-600 text-zinc-950" : ""
+                    }`}
+                    onClick={() => handleTabChange("upload")}
+                  >
+                    Upload
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className={`${
+                      activeTab === "addStudent"
+                        ? "bg-amber-600 text-zinc-950"
+                        : ""
+                    }`}
+                    onClick={() => handleTabChange("addStudent")}
+                  >
+                    Add Student
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Desktop Tabs - Hidden on Mobile */}
+            <div className="hidden md:block border-b border-zinc-800 mb-2">
+              <TabsList className="relative w-full flex py-2 px-0 bg-transparent">
                 <TabsTrigger
                   value="overview"
-                  className="flex-shrink-0 px-4 py-3 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
+                  className="flex-shrink-0 p-4 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
                 >
                   Overview
                 </TabsTrigger>
                 <TabsTrigger
                   value="students"
-                  className="flex-shrink-0 px-4 py-3 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
+                  className="flex-shrink-0 p-4 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
                 >
                   Students
                 </TabsTrigger>
                 <TabsTrigger
                   value="documents"
-                  className="flex-shrink-0 px-4 py-3 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
+                  className="flex-shrink-0 p-4 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
                 >
                   Documents
                 </TabsTrigger>
                 <TabsTrigger
                   value="upload"
-                  className="flex-shrink-0 px-4 py-3 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
+                  className="flex-shrink-0 p-4 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
                 >
                   Upload
                 </TabsTrigger>
                 <TabsTrigger
                   value="addStudent"
-                  className="flex-shrink-0 px-4 py-3 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
+                  className="flex-shrink-0 p-4 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
                 >
                   Add Student
                 </TabsTrigger>
