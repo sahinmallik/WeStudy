@@ -1,17 +1,16 @@
 "use client";
 
-import React, { use, useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,18 +24,10 @@ import {
   Users,
   UserPlus,
   File,
-  Clock,
   Search,
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { FileUpload } from "@/components/ui/file-upload";
 import {
   Table,
@@ -48,6 +39,7 @@ import {
 } from "@/components/ui/table";
 import { getSubjectsById } from "@/action/getSubjectById";
 import useFetch from "@/hooks/createSubject";
+import Image from "next/image";
 
 const SubjectDetailPage = ({ params }) => {
   const { id } = use(params);
@@ -168,7 +160,7 @@ const SubjectDetailPage = ({ params }) => {
 
   return (
     <div
-      className="p-6 bg-zinc-950 text-zinc-100"
+      className="p-3 sm:p-4 md:p-6 bg-zinc-950 text-zinc-100"
       style={{ minHeight: "100%" }}
     >
       {/* Header with back button */}
@@ -192,20 +184,20 @@ const SubjectDetailPage = ({ params }) => {
           </div>
 
           {/* Subject Title and Add Student button */}
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-3xl font-bold text-zinc-100">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100">
                   {subjects?.subjectName}
                 </h1>
-                <Badge className="bg-amber-800 text-amber-200 hidden md:block">
+                <Badge className="bg-amber-800 text-amber-200">
                   {subjects?.code}
                 </Badge>
               </div>
             </div>
             <Button
               onClick={() => setActiveTab("addStudent")}
-              className="bg-amber-600 hover:bg-amber-700 text-zinc-950"
+              className="bg-amber-600 hover:bg-amber-700 text-zinc-950 w-full sm:w-auto"
             >
               <UserPlus className="h-4 w-4 mr-2" />
               Add Student
@@ -218,12 +210,22 @@ const SubjectDetailPage = ({ params }) => {
             onValueChange={setActiveTab}
             className="w-full"
           >
-            <TabsList className="w-full ">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="students">Students</TabsTrigger>
-              <TabsTrigger value="documents">Documents</TabsTrigger>
-              <TabsTrigger value="upload">Upload</TabsTrigger>
-              <TabsTrigger value="addStudent">Add Student</TabsTrigger>
+            <TabsList className="w-full overflow-x-auto flex whitespace-nowrap">
+              <TabsTrigger value="overview" className="flex-shrink-0">
+                Overview
+              </TabsTrigger>
+              <TabsTrigger value="students" className="flex-shrink-0">
+                Students
+              </TabsTrigger>
+              <TabsTrigger value="documents" className="flex-shrink-0">
+                Documents
+              </TabsTrigger>
+              <TabsTrigger value="upload" className="flex-shrink-0">
+                Upload
+              </TabsTrigger>
+              <TabsTrigger value="addStudent" className="flex-shrink-0">
+                Add Student
+              </TabsTrigger>
             </TabsList>
 
             {/* Overview Tab Content */}
@@ -323,27 +325,27 @@ const SubjectDetailPage = ({ params }) => {
             <TabsContent value="students" className="pt-6">
               <Card className="bg-zinc-900 border-zinc-800">
                 <CardHeader>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-col sm:flex-row gap-4">
                     <CardTitle className="text-zinc-100">
                       Enrolled Students ({subjects?.emails.length})
                     </CardTitle>
-                    <div className="relative">
+                    <div className="relative w-full sm:w-auto">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" />
                       <Input
                         placeholder="Search students..."
-                        className="bg-zinc-800 border-zinc-700 pl-10 w-64 text-zinc-300"
+                        className="bg-zinc-800 border-zinc-700 pl-10 w-full sm:w-64 text-zinc-300"
                       />
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {subject.students.map((student) => (
                       <div
                         key={student.id}
                         className="flex items-center p-3 bg-zinc-800 rounded-md"
                       >
-                        <Avatar className="h-10 w-10 mr-3">
+                        <Avatar className="h-10 w-10 mr-3 flex-shrink-0">
                           <AvatarFallback className="bg-amber-900 text-amber-100">
                             {student.avatar}
                           </AvatarFallback>
@@ -359,7 +361,7 @@ const SubjectDetailPage = ({ params }) => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="text-zinc-400 hover:text-zinc-100"
+                          className="text-zinc-400 hover:text-zinc-100 flex-shrink-0"
                         >
                           <Users className="h-4 w-4" />
                         </Button>
@@ -374,34 +376,34 @@ const SubjectDetailPage = ({ params }) => {
             <TabsContent value="documents" className="pt-6">
               <Card className="bg-zinc-900 border-zinc-800">
                 <CardHeader>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-col sm:flex-row gap-4">
                     <CardTitle className="text-zinc-100">
                       Course Documents ({subject.documents.length})
                     </CardTitle>
-                    <div className="relative">
+                    <div className="relative w-full sm:w-auto">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" />
                       <Input
                         placeholder="Search documents..."
-                        className="bg-zinc-800 border-zinc-700 pl-10 w-64 text-zinc-300"
+                        className="bg-zinc-800 border-zinc-700 pl-10 w-full sm:w-64 text-zinc-300"
                       />
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="overflow-hidden rounded-md border border-zinc-800">
-                    <Table className="w-full">
+                  <div className="overflow-x-auto">
+                    <Table className="w-full min-w-[600px]">
                       <TableHeader>
                         <TableRow className="bg-zinc-800">
                           <TableHead className="text-left p-3 text-zinc-400 font-medium">
                             Document Name
                           </TableHead>
-                          <TableHead className="text-left p-3 text-zinc-400 font-medium">
+                          <TableHead className="text-left p-3 text-zinc-400 font-medium hidden sm:table-cell">
                             Size
                           </TableHead>
-                          <TableHead className="text-left p-3 text-zinc-400 font-medium">
+                          <TableHead className="text-left p-3 text-zinc-400 font-medium hidden md:table-cell">
                             Uploaded By
                           </TableHead>
-                          <TableHead className="text-left p-3 text-zinc-400 font-medium">
+                          <TableHead className="text-left p-3 text-zinc-400 font-medium hidden sm:table-cell">
                             Date
                           </TableHead>
                           <TableHead className="text-left p-3 text-zinc-400 font-medium">
@@ -418,18 +420,18 @@ const SubjectDetailPage = ({ params }) => {
                             <TableCell className="p-3">
                               <div className="flex items-center">
                                 <File className="h-4 w-4 mr-2 text-zinc-500" />
-                                <span className="text-zinc-300">
+                                <span className="text-zinc-300 truncate max-w-[150px] sm:max-w-none">
                                   {doc.name}
                                 </span>
                               </div>
                             </TableCell>
-                            <TableCell className="p-3 text-zinc-400">
+                            <TableCell className="p-3 text-zinc-400 hidden sm:table-cell">
                               {doc.size}
                             </TableCell>
-                            <TableCell className="p-3 text-zinc-400">
+                            <TableCell className="p-3 text-zinc-400 hidden md:table-cell">
                               {doc.uploadedBy}
                             </TableCell>
-                            <TableCell className="p-3 text-zinc-400">
+                            <TableCell className="p-3 text-zinc-400 hidden sm:table-cell">
                               {doc.date}
                             </TableCell>
                             <TableCell className="p-3">
