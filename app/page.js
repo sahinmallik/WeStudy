@@ -65,7 +65,7 @@ export default function Home() {
             <Link href="/dashboard/overview">
               <Button
                 size="lg"
-                className="bg-amber-600 hover:bg-amber-700 text-zinc-950 w-full sm:w-auto"
+                className="bg-amber-600 hover:bg-amber-700 text-zinc-950"
               >
                 Get Started
               </Button>
