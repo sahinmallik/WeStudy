@@ -63,7 +63,10 @@ export default function Home() {
           </div>
           <div className="space-x-4">
             <Link href="/dashboard/overview">
-              <Button className="px-8" size="lg">
+              <Button
+                size="lg"
+                className="bg-amber-600 hover:bg-amber-700 text-zinc-950 w-full sm:w-auto"
+              >
                 Get Started
               </Button>
             </Link>
@@ -91,7 +94,7 @@ export default function Home() {
               return (
                 <Card
                   key={index}
-                  className="border-2 hover:border-primary transition-colors duration-300"
+                  className=" border-zinc-800 hover:border-amber-700 transition-all cursor-pointer group overflow-hidden"
                 >
                   <CardContent className="pt-6 text-center flex flex-col items-center">
                     <div className="flex flex-col items-center justify-center">
@@ -101,7 +104,9 @@ export default function Home() {
                     <p className="text-muted-foreground">
                       {feature.description}
                     </p>
-                    <Badge className="mt-5">{feature.status}</Badge>
+                    <Badge className="mt-5 bg-amber-950 text-amber-400 hover:bg-amber-900">
+                      {feature.status}
+                    </Badge>
                   </CardContent>
                 </Card>
               );

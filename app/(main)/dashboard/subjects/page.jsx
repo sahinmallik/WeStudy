@@ -4,11 +4,12 @@ import React, { useEffect } from "react";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Book, Loader2, Users } from "lucide-react";
+import { ArrowLeft, Book, Loader2, Users } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { getSubjects } from "@/action/getSubjects";
 import useFetch from "@/hooks/createSubject";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const SubjectsPage = () => {
   // Sample subjects data
@@ -35,6 +36,18 @@ const SubjectsPage = () => {
   return (
     <div className="p-6 bg-zinc-950 text-zinc-100 min-h-screen">
       {/* Header */}
+      <div className="flex items-center mb-2">
+        <Link href="/dashboard/overview">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-zinc-400 hover:text-zinc-100"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Dashboard
+          </Button>
+        </Link>
+      </div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-zinc-100">My Subjects</h1>
         <p className="text-zinc-400">
