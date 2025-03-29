@@ -210,26 +210,43 @@ const SubjectDetailPage = ({ params }) => {
             onValueChange={setActiveTab}
             className="w-full"
           >
-            <TabsList className="w-full overflow-x-auto flex whitespace-nowrap">
-              <TabsTrigger value="overview" className="flex-shrink-0">
-                Overview
-              </TabsTrigger>
-              <TabsTrigger value="students" className="flex-shrink-0">
-                Students
-              </TabsTrigger>
-              <TabsTrigger value="documents" className="flex-shrink-0">
-                Documents
-              </TabsTrigger>
-              <TabsTrigger value="upload" className="flex-shrink-0">
-                Upload
-              </TabsTrigger>
-              <TabsTrigger value="addStudent" className="flex-shrink-0">
-                Add Student
-              </TabsTrigger>
-            </TabsList>
+            <div className="border-b border-zinc-800 mb-2">
+              <TabsList className="relative w-full flex overflow-x-auto scrollbar-hide py-2 px-0 bg-transparent">
+                <TabsTrigger
+                  value="overview"
+                  className="flex-shrink-0 px-4 py-3 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
+                >
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger
+                  value="students"
+                  className="flex-shrink-0 px-4 py-3 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
+                >
+                  Students
+                </TabsTrigger>
+                <TabsTrigger
+                  value="documents"
+                  className="flex-shrink-0 px-4 py-3 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
+                >
+                  Documents
+                </TabsTrigger>
+                <TabsTrigger
+                  value="upload"
+                  className="flex-shrink-0 px-4 py-3 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
+                >
+                  Upload
+                </TabsTrigger>
+                <TabsTrigger
+                  value="addStudent"
+                  className="flex-shrink-0 px-4 py-3 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
+                >
+                  Add Student
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
             {/* Overview Tab Content */}
-            <TabsContent value="overview" className="pt-6">
+            <TabsContent value="overview" className="pt-2">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
                   <Card className="bg-zinc-900 border-zinc-800">
@@ -322,7 +339,7 @@ const SubjectDetailPage = ({ params }) => {
             </TabsContent>
 
             {/* Students Tab Content */}
-            <TabsContent value="students" className="pt-6">
+            <TabsContent value="students" className="pt-2">
               <Card className="bg-zinc-900 border-zinc-800">
                 <CardHeader>
                   <div className="flex items-center justify-between flex-col sm:flex-row gap-4">
@@ -373,7 +390,7 @@ const SubjectDetailPage = ({ params }) => {
             </TabsContent>
 
             {/* Documents Tab Content */}
-            <TabsContent value="documents" className="pt-6">
+            <TabsContent value="documents" className="pt-2">
               <Card className="bg-zinc-900 border-zinc-800">
                 <CardHeader>
                   <div className="flex items-center justify-between flex-col sm:flex-row gap-4">
@@ -462,7 +479,7 @@ const SubjectDetailPage = ({ params }) => {
             </TabsContent>
 
             {/* Upload Tab Content */}
-            <TabsContent value="upload" className="pt-6">
+            <TabsContent value="upload" className="pt-2">
               <Card className="bg-zinc-900 border-zinc-800">
                 <CardHeader>
                   <CardTitle className="text-zinc-100">
@@ -499,7 +516,7 @@ const SubjectDetailPage = ({ params }) => {
             </TabsContent>
 
             {/* Add Student Tab Content */}
-            <TabsContent value="addStudent" className="pt-6">
+            <TabsContent value="addStudent" className="pt-2">
               <Card className="bg-zinc-900 border-zinc-800">
                 <CardHeader>
                   <CardTitle className="text-zinc-100">
