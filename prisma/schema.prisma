@@ -17,18 +17,33 @@ model User {
   id          String    @id @default(uuid())
   clerkUserId String    @unique
   email       String    @unique
-  name        String?
+  name        String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  groups    GroupAdded[]
 }
 
-model Subject {
-  id          String    @id @default(cuid())
-  code        String
-  subjectName String
-  emails      String[]
-  documents   String[]
-  videoUrl    String    @default("")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+model Group {
+  id              String    @id @default(cuid())
+  groupName       String
+  tag             String
+  specialization  String
+  documents       String[]
+  videoUrl        String    @default("")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  users       GroupAdded[]
+}
+
+model GroupAdded {
+  id        String @id @default(cuid())
+  userId    String
+  groupId   String
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group     Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId]) // Ensures a user can't enroll in the same subject twice
 }

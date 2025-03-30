@@ -21,6 +21,8 @@ import {
   User2,
   Book,
   Loader2,
+  Users,
+  UserMinus,
 } from "lucide-react";
 import {
   Collapsible,
@@ -61,7 +63,6 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { usePathname } from "next/navigation";
-import { createSubject } from "@/action/subject";
 import useFetch from "@/hooks/createSubject";
 import { getSubjects } from "@/action/getSubjects";
 
@@ -114,17 +115,17 @@ export function AppSidebar(props) {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Link href="/dashboard/create-subject">
+                    <Link href="/dashboard/create-group">
                       <Button
                         variant="ghost"
                         className="text-amber-500 hover:text-amber-400 hover:bg-zinc-900 p-5"
                       >
-                        <BookOpen style={{ width: "20px", height: "20px" }} />
+                        <Users style={{ width: "20px", height: "20px" }} />
                       </Button>
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Create Subject</p>
+                    <p>Create Group</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -145,9 +146,9 @@ export function AppSidebar(props) {
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/dashboard/subjects">
+              <Link href="/dashboard/groups">
                 <SidebarMenuButton isActive={lastPath === "subjects"}>
-                  <Book className="text-sidebar-foreground/70" /> Subjects
+                  <Users className="text-sidebar-foreground/70" /> Groups
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
@@ -185,7 +186,7 @@ export function AppSidebar(props) {
           </SidebarMenu>
         </SidebarGroup>
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-          <SidebarGroupLabel>Subjects</SidebarGroupLabel>
+          <SidebarGroupLabel>Groups</SidebarGroupLabel>
           <SidebarMenu>
             {updateLoading ? (
               <SidebarMenuItem className="flex items-center justify-center">
@@ -196,7 +197,7 @@ export function AppSidebar(props) {
                 <SidebarMenuItem key={subject.id}>
                   <SidebarMenuButton asChild>
                     <Link href={`/dashboard/subject/${subject.id}`}>
-                      <BookOpen />
+                      <Users />
                       <span>{subject.code}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -214,15 +215,8 @@ export function AppSidebar(props) {
                     >
                       <Link href={`/dashboard/subject/${subject.id}`}>
                         <DropdownMenuItem className="space-x-3">
-                          <Folder className="text-muted-foreground w-4 h-4" />
-                          <span>View Subject</span>
-                        </DropdownMenuItem>
-                      </Link>
-                      <DropdownMenuSeparator />
-                      <Link href={`/dashboard/subject/${subject.id}`}>
-                        <DropdownMenuItem className="space-x-3">
-                          <Trash2 className="text-muted-foreground w-4 h-4" />
-                          <span>Delete Subject</span>
+                          <UserMinus className="text-muted-foreground w-4 h-4" />
+                          <span>Leave Group</span>
                         </DropdownMenuItem>
                       </Link>
                     </DropdownMenuContent>
@@ -232,7 +226,7 @@ export function AppSidebar(props) {
             ) : (
               <SidebarMenuItem className="flex items-center justify-center">
                 <p className="text-center text-muted-foreground">
-                  No subjects found.
+                  No Groups found.
                 </p>
               </SidebarMenuItem>
             )}

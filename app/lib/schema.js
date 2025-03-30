@@ -1,10 +1,13 @@
 import { z } from "zod";
 
-export const subjectSchema = z.object({
+export const GroupSchema = z.object({
   name: z.string({
-    required_error: "Please enter a subject name",
+    required_error: "Please enter a Group name",
   }),
-  code: z.string({
-    required_error: "Please enter a subject code",
+  subjectTag: z.string({
+    required_error: "Please select a subject tag",
+  }),
+  specialization: z.string({
+    required_error: "Please select a specialization",
   }),
 });
