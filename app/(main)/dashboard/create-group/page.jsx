@@ -1,5 +1,13 @@
 "use client";
-import { Book, Box, Check, ChevronsUpDown, Loader2 } from "lucide-react";
+import {
+  Book,
+  Box,
+  Check,
+  ChevronsUpDown,
+  Loader2,
+  User,
+  Users,
+} from "lucide-react";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -110,8 +118,8 @@ export default function GlowingFormCard() {
       <div className="flex justify-center items-center w-full max-w-md">
         <GridItem
           area=""
-          icon={<Book className="h-4 w-4 text-black dark:text-neutral-400" />}
-          title="Enter Your Subject Name"
+          icon={<Users className="h-4 w-4 text-black dark:text-neutral-400" />}
+          title="Enter Your Group Name"
           description={
             <form
               onSubmit={handleSubmit(onSubmit)}
