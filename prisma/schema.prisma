@@ -29,6 +29,7 @@ model Group {
   groupName       String
   tag             String
   specialization  String
+  userCount       BigInt
   documents       String[]
   videoUrl        String    @default("")
   createdAt       DateTime  @default(now())

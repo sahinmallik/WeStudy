@@ -26,24 +26,24 @@ const DashBoardHeader = () => {
   const id = paths.length > 2 ? paths[2] : null;
 
   const {
-    data: subject,
-    loading: subjectsLoading,
-    fn: getSubjectsByIdFn,
+    data: group,
+    loading: groupLoading,
+    fn: getGroupByIdFn,
   } = useFetch(getSubjectsById);
 
   useEffect(() => {
-    const fetchSubjectById = async () => {
+    const fetchGroupById = async () => {
       try {
         if (id) {
-          await getSubjectsByIdFn(id);
+          await getGroupByIdFn(id);
         }
       } catch (error) {
         console.error(error);
       }
     };
-    fetchSubjectById();
+    fetchGroupById();
   }, [id]);
-  console.log(subject);
+  console.log(group);
   return (
     <header
       className="flex items-center justify-between h-14  border-b bg-background"
@@ -72,7 +72,7 @@ const DashBoardHeader = () => {
                   </Link>
                   <BreadcrumbSeparator />
                   <Link href={`/dashboard/subject/${id}`}>
-                    <BreadcrumbLink>{subject?.subjectName}</BreadcrumbLink>
+                    <BreadcrumbLink>{group?.groupName}</BreadcrumbLink>
                   </Link>
                 </BreadcrumbItem>
               </>
@@ -101,9 +101,9 @@ const DashBoardHeader = () => {
 
           {/* ✅ Mobile view breadcrumb */}
           <span className="sm:hidden font-medium">
-            {subject && paths.length > 2
-              ? subject?.subjectName.charAt(0).toUpperCase() +
-                subject?.subjectName.slice(1)
+            {group && paths.length > 2
+              ? group?.groupName.charAt(0).toUpperCase() +
+                group?.groupName.slice(1)
               : lastPath.charAt(0).toUpperCase() + lastPath.slice(1)}
           </span>
         </Breadcrumb>

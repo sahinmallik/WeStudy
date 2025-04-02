@@ -53,9 +53,9 @@ const SubjectDetailPage = ({ params }) => {
   const { id } = use(params);
   const [activeTab, setActiveTab] = useState("overview");
   const {
-    data: subjects,
-    loading: subjectsLoading,
-    fn: getSubjectsByIdFn,
+    data: group,
+    loading: groupLoading,
+    fn: getgroupByIdFn,
   } = useFetch(getSubjectsById);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -63,7 +63,7 @@ const SubjectDetailPage = ({ params }) => {
     const fetchSubjectById = async () => {
       try {
         if (id) {
-          await getSubjectsByIdFn(id);
+          await getgroupByIdFn(id);
         }
       } catch (error) {
         console.error(error);
@@ -71,7 +71,7 @@ const SubjectDetailPage = ({ params }) => {
     };
     fetchSubjectById();
   }, [id]);
-  console.log(id);
+  console.log(group);
   // Sample subject data
   const subject = {
     code: "ADBS",
@@ -196,7 +196,7 @@ const SubjectDetailPage = ({ params }) => {
       style={{ minHeight: "100%" }}
     >
       {/* Header with back button */}
-      {subjectsLoading ? (
+      {groupLoading ? (
         <div className="flex justify-center items-center">
           <Loader2 className="animate-spin h-10 w-10" />
         </div>
@@ -220,10 +220,13 @@ const SubjectDetailPage = ({ params }) => {
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100">
-                  {subjects?.subjectName}
+                  {group?.groupName}
                 </h1>
                 <Badge className="bg-amber-800 text-amber-200">
-                  {subjects?.code}
+                  {group?.tag}
+                </Badge>
+                <Badge className="bg-amber-800 text-amber-200">
+                  {group?.specialization}
                 </Badge>
               </div>
             </div>
@@ -422,13 +425,13 @@ const SubjectDetailPage = ({ params }) => {
                       <div className="grid grid-cols-2 gap-4">
                         <div className="bg-zinc-800 p-4 rounded-md text-center">
                           <p className="text-3xl font-bold text-amber-500">
-                            {subjects?.emails.length}
+                            {/* {subjects?.emails.length} */}
                           </p>
                           <p className="text-zinc-400 text-sm">Students</p>
                         </div>
                         <div className="bg-zinc-800 p-4 rounded-md text-center">
                           <p className="text-3xl font-bold text-amber-500">
-                            {subjects?.documents.length}
+                            {/* {subjects?.documents.length} */}
                           </p>
                           <p className="text-zinc-400 text-sm">Documents</p>
                         </div>
@@ -445,7 +448,7 @@ const SubjectDetailPage = ({ params }) => {
                 <CardHeader>
                   <div className="flex items-center justify-between flex-col sm:flex-row gap-4">
                     <CardTitle className="text-zinc-100">
-                      Enrolled Students ({subjects?.emails.length})
+                      {/* Enrolled Students ({subjects?.emails.length}) */}
                     </CardTitle>
                     <div className="relative w-full sm:w-auto">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" />

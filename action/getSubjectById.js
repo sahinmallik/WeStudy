@@ -17,12 +17,20 @@ export async function getSubjectsById(id) {
   }
 
   try {
-    const subject = await db.subject.findUnique({
+    const group = await db.group.findUnique({
       where: {
         id: id,
       },
+      include: {
+        users: {
+          include: {
+            user: true,
+          },
+        },
+      },
     });
-    return subject;
+    // console.log("group", group);
+    return group;
   } catch (error) {
     console.log("Error getting subject: ", error.message);
     throw new Error(error);

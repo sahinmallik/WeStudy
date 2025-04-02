@@ -19,7 +19,7 @@ export async function createGroup(data) {
   if (!user) {
     throw new Error("User not found");
   }
-  console.log(data);
+  // console.log(data);
   try {
     const result = await db.$transaction(async (tx) => {
       const group = await tx.group.create({
@@ -27,6 +27,7 @@ export async function createGroup(data) {
           groupName: data.name,
           tag: data.subjectTag,
           specialization: data.specialization,
+          userCount: 1,
         },
       });
       const addUser = await tx.groupAdded.create({

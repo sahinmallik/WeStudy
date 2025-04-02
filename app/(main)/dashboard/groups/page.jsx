@@ -17,21 +17,22 @@ const SubjectsPage = () => {
 
   const {
     loading: updateLoading,
-    fn: getSubjectsFn,
-    data: subjects,
+    fn: getGroupsFn,
+    data: userDetails,
   } = useFetch(getSubjects);
 
   useEffect(() => {
-    const fetchSubjects = async () => {
+    const fetchGroups = async () => {
       try {
-        await getSubjectsFn();
+        await getGroupsFn();
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchSubjects();
+    fetchGroups();
   }, [pathName]);
+  console.log(userDetails);
 
   return (
     <div className="p-6 bg-zinc-950 text-zinc-100 min-h-screen">
@@ -51,8 +52,8 @@ const SubjectsPage = () => {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-zinc-100">My Subjects</h1>
         <p className="text-zinc-400">
-          Currently You are in {subjects?.length} subjects. Keep up the good
-          work!
+          Currently You are in {userDetails?.groups?.length} subjects. Keep up
+          the good work!
         </p>
       </div>
 
@@ -63,8 +64,8 @@ const SubjectsPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {subjects?.map((subject, index) => (
-            <Link href={`/dashboard/subject/${subject.id}`} key={index}>
+          {userDetails?.groups?.map((group, index) => (
+            <Link href={`/dashboard/group/${group.id}`} key={index}>
               <Card
                 key={index}
                 className="bg-zinc-900 border-zinc-800 hover:border-amber-700 transition-all cursor-pointer group overflow-hidden"
@@ -73,10 +74,10 @@ const SubjectsPage = () => {
                   <div className="flex justify-between items-start">
                     <div>
                       <Badge className="mb-2 bg-amber-950 text-amber-400 hover:bg-amber-900">
-                        {subject.code}
+                        {group?.group.tag}
                       </Badge>
                       <CardTitle className="text-zinc-100">
-                        {subject.subjectName}
+                        {group?.group.groupName}
                       </CardTitle>
                     </div>
                     <div className="bg-zinc-800 rounded-full h-12 w-12 flex items-center justify-center group-hover:bg-amber-900 transition-colors">
@@ -90,7 +91,7 @@ const SubjectsPage = () => {
                     <div className="flex items-center">
                       <Users className="h-4 w-4 mr-2 text-zinc-500" />
                       <span className="text-zinc-400 text-sm">
-                        {subject.emails?.length} students
+                        {group?.group?.userCount} students
                       </span>
                     </div>
 
