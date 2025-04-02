@@ -78,7 +78,6 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           <Card className="bg-zinc-900 border-zinc-800">
             <CardHeader className="pb-2">
@@ -92,7 +91,7 @@ const Dashboard = () => {
             <CardContent>
               <div className="flex items-end">
                 <p className="text-4xl font-bold text-amber-500">
-                  {userDetails?.groups.length}
+                  {userDetails?.groups?.length || 0}
                 </p>
                 <Badge className="ml-2 bg-amber-950 text-amber-400 hover:bg-amber-900">
                   Active
@@ -117,7 +116,6 @@ const Dashboard = () => {
             </CardFooter> */}
           </Card>
         </div>
-
         {/* Forum Section */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
@@ -168,7 +166,6 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
-
         {/* Recent Activity */}
         {/* <div>
         <div className="flex justify-between items-center mb-4">

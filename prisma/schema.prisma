@@ -38,7 +38,7 @@ model Group {
   updatedAt       DateTime  @updatedAt
 
   users       GroupAdded[]
-
+  @@index([id])
   @@index([tag])  // ✅ Optimized filtering by tag
   @@index([specialization]) // ✅ Optimized filtering by specialization
   @@index([groupName]) // ✅ Optional: if you ever search by groupName
