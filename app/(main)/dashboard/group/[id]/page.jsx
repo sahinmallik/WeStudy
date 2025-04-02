@@ -71,7 +71,8 @@ const SubjectDetailPage = ({ params }) => {
     };
     fetchSubjectById();
   }, [id]);
-  console.log(group);
+  console.log(id);
+  console.log("group", group);
   // Sample subject data
   const subject = {
     code: "ADBS",
@@ -425,13 +426,13 @@ const SubjectDetailPage = ({ params }) => {
                       <div className="grid grid-cols-2 gap-4">
                         <div className="bg-zinc-800 p-4 rounded-md text-center">
                           <p className="text-3xl font-bold text-amber-500">
-                            {/* {subjects?.emails.length} */}
+                            {group?.userCount}
                           </p>
                           <p className="text-zinc-400 text-sm">Students</p>
                         </div>
                         <div className="bg-zinc-800 p-4 rounded-md text-center">
                           <p className="text-3xl font-bold text-amber-500">
-                            {/* {subjects?.documents.length} */}
+                            {group?.documents.length}
                           </p>
                           <p className="text-zinc-400 text-sm">Documents</p>
                         </div>

@@ -65,7 +65,7 @@ const SubjectsPage = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {userDetails?.groups?.map((group, index) => (
-            <Link href={`/dashboard/group/${group.id}`} key={index}>
+            <Link href={`/dashboard/group/${group?.group.id}`} key={index}>
               <Card
                 key={index}
                 className="bg-zinc-900 border-zinc-800 hover:border-amber-700 transition-all cursor-pointer group overflow-hidden"

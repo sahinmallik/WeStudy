@@ -16,6 +16,8 @@ export async function getSubjectsById(id) {
     throw new Error("User not found");
   }
 
+  console.log("id", id);
+
   try {
     const group = await db.group.findUnique({
       where: {
@@ -29,7 +31,7 @@ export async function getSubjectsById(id) {
         },
       },
     });
-    // console.log("group", group);
+    console.log("group", group);
     return group;
   } catch (error) {
     console.log("Error getting subject: ", error.message);
