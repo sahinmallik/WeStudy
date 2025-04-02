@@ -70,7 +70,7 @@ const SubjectDetailPage = ({ params }) => {
       }
     };
     fetchSubjectById();
-  }, [id]);
+  }, []);
   console.log(id);
   console.log("group", group);
   // Sample subject data

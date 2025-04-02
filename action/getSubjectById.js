@@ -5,36 +5,24 @@ import { auth } from "@clerk/nextjs/server";
 
 export async function getSubjectsById(id) {
   const { userId } = await auth();
-
-  const user = await db.user.findUnique({
-    where: {
-      clerkUserId: userId,
-    },
-  });
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-
-  console.log("id", id);
+  if (!userId) throw new Error("Unauthorized");
 
   try {
+    // Fetch group along with users in a single query
     const group = await db.group.findUnique({
-      where: {
-        id: id,
-      },
+      where: { id },
       include: {
         users: {
-          include: {
-            user: true,
-          },
+          include: { user: true },
         },
       },
     });
-    console.log("group", group);
+
+    if (!group) throw new Error("Group not found");
+
     return group;
   } catch (error) {
-    console.log("Error getting subject: ", error.message);
-    throw new Error(error);
+    console.error("Error fetching subject:", error.message);
+    throw new Error("Failed to fetch subject");
   }
 }

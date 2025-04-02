@@ -15,13 +15,15 @@ datasource db {
 
 model User {
   id          String    @id @default(uuid())
-  clerkUserId String    @unique
+  clerkUserId String    @unique  @db.Text
   email       String    @unique
   name        String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   groups    GroupAdded[]
+
+  @@index([clerkUserId])  // ✅ Index for faster user lookup
 }
 
 model Group {
@@ -29,22 +31,26 @@ model Group {
   groupName       String
   tag             String
   specialization  String
-  userCount       BigInt
+  userCount       Int       // ✅ Changed from BigInt to Int (faster)
   documents       String[]
   videoUrl        String    @default("")
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
   users       GroupAdded[]
+
+  @@index([tag])  // ✅ Optimized filtering by tag
+  @@index([specialization]) // ✅ Optimized filtering by specialization
+  @@index([groupName]) // ✅ Optional: if you ever search by groupName
 }
 
 model GroupAdded {
-  id        String @id @default(cuid())
   userId    String
   groupId   String
 
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   group     Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, groupId]) // Ensures a user can't enroll in the same subject twice
+  @@id([userId, groupId])  // ✅ Composite primary key for faster joins
+  @@unique([userId, groupId]) // ✅ Prevents duplicate user-group entries
 }

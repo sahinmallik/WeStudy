@@ -3,32 +3,13 @@
 import React, { useEffect } from "react";
 import { SignOutButton, UserButton, useUser } from "@clerk/nextjs";
 import {
-  BookOpen,
-  Bot,
-  Folder,
-  Forward,
-  Frame,
   LayoutDashboard,
-  Map,
-  MoreHorizontal,
-  NotebookPen,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-  Trash2,
-  Notebook,
-  ChevronUp,
-  User2,
-  Book,
-  Loader2,
   Users,
+  MoreHorizontal,
   UserMinus,
+  ChevronUp,
+  Loader2,
 } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import {
   Sidebar,
   SidebarContent,
@@ -38,12 +19,9 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuAction,
-  SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
+  SidebarMenuButton,
+  SidebarMenuAction,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Button } from "./ui/button";
@@ -59,24 +37,19 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { usePathname } from "next/navigation";
 import useFetch from "@/hooks/createSubject";
 import { getSubjects } from "@/action/getSubjects";
 
-// This is sample data.
-
 export function AppSidebar(props) {
   const { user } = useUser();
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   const pathName = usePathname();
   const paths = pathName.split("/").filter(Boolean);
-  const lastPath = paths.length == 2 ? paths[1] : " ";
+  const lastPath = paths.length === 2 ? paths[1] : " ";
 
   const {
     loading: updateLoading,
@@ -85,18 +58,8 @@ export function AppSidebar(props) {
   } = useFetch(getSubjects);
 
   useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        await getGroupsFn();
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchGroups();
+    getGroupsFn().catch(console.error);
   }, [pathName]);
-
-  console.log("groups", userDetails);
 
   return (
     <Sidebar {...props} variant="floating">
@@ -135,6 +98,7 @@ export function AppSidebar(props) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -154,40 +118,10 @@ export function AppSidebar(props) {
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
-            {/* {data.navMain.map((item) => (
-              <Collapsible
-                key={item.title}
-                asChild
-                defaultOpen={item.isActive}
-                className="group/collapsible"
-              >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title}>
-                      {item.icon && <item.icon />}
-                      <span>{item.title}</span>
-                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      {item.items?.map((subItem) => (
-                        <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton asChild>
-                            <a href={subItem.url}>
-                              <span>{subItem.title}</span>
-                            </a>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      ))}
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
-            ))} */}
           </SidebarMenu>
         </SidebarGroup>
-        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+
+        <SidebarGroup>
           <SidebarGroupLabel>Groups</SidebarGroupLabel>
           <SidebarMenu>
             {updateLoading ? (
@@ -195,19 +129,18 @@ export function AppSidebar(props) {
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               </SidebarMenuItem>
             ) : userDetails?.groups?.length > 0 ? (
-              userDetails?.groups.map((group) => (
-                <SidebarMenuItem key={group.group.id}>
+              userDetails.groups.map(({ group }) => (
+                <SidebarMenuItem key={group.id}>
                   <SidebarMenuButton asChild>
-                    <Link href={`/dashboard/group/${group.group.id}`}>
+                    <Link href={`/dashboard/group/${group.id}`}>
                       <Users />
-                      <span>{group.group.groupName}</span>
+                      <span>{group.groupName}</span>
                     </Link>
                   </SidebarMenuButton>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <SidebarMenuAction showOnHover>
                         <MoreHorizontal />
-                        <span className="sr-only">More</span>
                       </SidebarMenuAction>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
@@ -235,13 +168,14 @@ export function AppSidebar(props) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> {user.fullName}
+                  <Users /> {user.fullName}
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
