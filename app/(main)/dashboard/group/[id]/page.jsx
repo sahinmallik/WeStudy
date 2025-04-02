@@ -178,14 +178,14 @@ const SubjectDetailPage = ({ params }) => {
     switch (activeTab) {
       case "overview":
         return "Overview";
-      case "students":
-        return "Students";
+      case "users":
+        return "Users";
       case "documents":
         return "Documents";
       case "upload":
         return "Upload";
-      case "addStudent":
-        return "Add Student";
+      case "addUsers":
+        return "Add Users";
       default:
         return "Overview";
     }
@@ -204,14 +204,14 @@ const SubjectDetailPage = ({ params }) => {
       ) : (
         <>
           <div className="flex items-center mb-2">
-            <Link href="/dashboard/subjects">
+            <Link href="/dashboard/groups">
               <Button
                 variant="ghost"
                 size="sm"
                 className="text-zinc-400 hover:text-zinc-100"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Subjects
+                Back to Groups
               </Button>
             </Link>
           </div>
@@ -232,11 +232,11 @@ const SubjectDetailPage = ({ params }) => {
               </div>
             </div>
             <Button
-              onClick={() => setActiveTab("addStudent")}
+              onClick={() => setActiveTab("addUsers")}
               className="bg-amber-600 hover:bg-amber-700 text-zinc-950 w-full sm:w-auto"
             >
               <UserPlus className="h-4 w-4 mr-2" />
-              Add Student
+              Add User
             </Button>
           </div>
 
@@ -274,13 +274,11 @@ const SubjectDetailPage = ({ params }) => {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className={`${
-                      activeTab === "students"
-                        ? "bg-amber-600 text-zinc-950"
-                        : ""
+                      activeTab === "users" ? "bg-amber-600 text-zinc-950" : ""
                     }`}
-                    onClick={() => handleTabChange("students")}
+                    onClick={() => handleTabChange("users")}
                   >
-                    Students
+                    Users
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className={`${
@@ -302,13 +300,13 @@ const SubjectDetailPage = ({ params }) => {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className={`${
-                      activeTab === "addStudent"
+                      activeTab === "addUsers"
                         ? "bg-amber-600 text-zinc-950"
                         : ""
                     }`}
-                    onClick={() => handleTabChange("addStudent")}
+                    onClick={() => handleTabChange("addUsers")}
                   >
-                    Add Student
+                    Add User
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -324,10 +322,10 @@ const SubjectDetailPage = ({ params }) => {
                   Overview
                 </TabsTrigger>
                 <TabsTrigger
-                  value="students"
+                  value="users"
                   className="flex-shrink-0 p-4 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
                 >
-                  Students
+                  Users
                 </TabsTrigger>
                 <TabsTrigger
                   value="documents"
@@ -342,10 +340,10 @@ const SubjectDetailPage = ({ params }) => {
                   Upload
                 </TabsTrigger>
                 <TabsTrigger
-                  value="addStudent"
+                  value="addUsers"
                   className="flex-shrink-0 p-4 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
                 >
-                  Add Student
+                  Add Users
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -362,7 +360,7 @@ const SubjectDetailPage = ({ params }) => {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="bg-zinc-800 p-3 rounded-md font-mono text-sm text-zinc-300 overflow-x-auto">
-                        <code>{subject.meetingLink}</code>
+                        <code>{group?.videoUrl}</code>
                       </div>
                       <Button className="bg-amber-600 hover:bg-amber-700 text-zinc-950">
                         <Video className="h-4 w-4 mr-2" />
@@ -444,7 +442,7 @@ const SubjectDetailPage = ({ params }) => {
             </TabsContent>
 
             {/* Students Tab Content */}
-            <TabsContent value="students" className="pt-2">
+            <TabsContent value="users" className="pt-2">
               <Card className="bg-zinc-900 border-zinc-800">
                 <CardHeader>
                   <div className="flex items-center justify-between flex-col sm:flex-row gap-4">
@@ -454,7 +452,7 @@ const SubjectDetailPage = ({ params }) => {
                     <div className="relative w-full sm:w-auto">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" />
                       <Input
-                        placeholder="Search students..."
+                        placeholder="Search users..."
                         className="bg-zinc-800 border-zinc-700 pl-10 w-full sm:w-64 text-zinc-300"
                       />
                     </div>
@@ -462,22 +460,22 @@ const SubjectDetailPage = ({ params }) => {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {subject.students.map((student) => (
+                    {group?.users.map((user) => (
                       <div
-                        key={student.id}
+                        key={user.user.id}
                         className="flex items-center p-3 bg-zinc-800 rounded-md"
                       >
-                        <Avatar className="h-10 w-10 mr-3 flex-shrink-0">
+                        {/* <Avatar className="h-10 w-10 mr-3 flex-shrink-0">
                           <AvatarFallback className="bg-amber-900 text-amber-100">
                             {student.avatar}
                           </AvatarFallback>
-                        </Avatar>
+                        </Avatar> */}
                         <div className="flex-1 min-w-0">
                           <p className="text-zinc-200 font-medium truncate">
-                            {student.name}
+                            {user.user.name}
                           </p>
                           <p className="text-zinc-400 text-sm truncate">
-                            {student.email}
+                            {user.user.email}
                           </p>
                         </div>
                         <Button
@@ -621,14 +619,14 @@ const SubjectDetailPage = ({ params }) => {
             </TabsContent>
 
             {/* Add Student Tab Content */}
-            <TabsContent value="addStudent" className="pt-2">
+            <TabsContent value="addUsers" className="pt-2">
               <Card className="bg-zinc-900 border-zinc-800">
                 <CardHeader>
                   <CardTitle className="text-zinc-100">
                     Add Student to {subject.code}
                   </CardTitle>
                   <CardDescription className="text-zinc-400">
-                    Add new students to the course
+                    Add new users to the Group
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
