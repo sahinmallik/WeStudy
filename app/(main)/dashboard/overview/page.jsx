@@ -34,22 +34,22 @@ const Dashboard = () => {
 
   const {
     loading: updateLoading,
-    fn: getSubjectsFn,
-    data: subjects,
+    fn: getGroupsFn,
+    data: userDetails,
   } = useFetch(getSubjects);
 
   useEffect(() => {
-    const fetchSubjects = async () => {
+    const fetchGroups = async () => {
       try {
-        await getSubjectsFn();
+        await getGroupsFn();
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchSubjects();
+    fetchGroups();
   }, [pathName]);
-  console.log(user);
+  console.log(userDetails);
   return (
     <div
       className="p-3 sm:p-4 md:p-6 bg-zinc-950 text-zinc-100"
@@ -92,20 +92,20 @@ const Dashboard = () => {
             <CardContent>
               <div className="flex items-end">
                 <p className="text-4xl font-bold text-amber-500">
-                  {subjects?.length}
+                  {userDetails?.groups.length}
                 </p>
                 <Badge className="ml-2 bg-amber-950 text-amber-400 hover:bg-amber-900">
                   Active
                 </Badge>
               </div>
             </CardContent>
-            <CardFooter className="text-zinc-400 text-sm">
+            {/* <CardFooter className="text-zinc-400 text-sm">
               <Book className="h-4 w-4 mr-2 text-zinc-500" />
-              {subjects?.map((subject, index) => {
+              {userDetails?.groups?.map((group, index) => {
                 return index < 3 ? (
                   <span key={index} className="text-zinc-300">
-                    {subject.code}
-                    {index < Math.min(subjects.length, 3) - 1 && " ,  "}
+                    {group.group.tag}
+                    {index < Math.min(group.length, 3) - 1 && " ,  "}
                   </span>
                 ) : index === 3 ? (
                   <span key={index} className="text-zinc-400">
@@ -114,7 +114,7 @@ const Dashboard = () => {
                   </span>
                 ) : null;
               })}
-            </CardFooter>
+            </CardFooter> */}
           </Card>
         </div>
 

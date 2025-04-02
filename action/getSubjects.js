@@ -20,14 +20,12 @@ export async function getSubjects() {
     throw new Error("User not found");
   }
   try {
-    const subjects = await db.subject.findMany({
-      where: {
-        emails: {
-          has: user.email,
-        },
-      },
+    const userDetails = await prisma.user.findUnique({
+      where: { email: user.email },
+      include: { groups: { include: { group: true } } },
     });
-    return subjects;
+    //console.log("user", userDetails);
+    return userDetails;
   } catch (error) {
     console.log("Error getting subjects: ", error.message);
     throw new Error(error);

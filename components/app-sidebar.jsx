@@ -80,21 +80,23 @@ export function AppSidebar(props) {
 
   const {
     loading: updateLoading,
-    fn: getSubjectsFn,
-    data: subjects,
+    fn: getGroupsFn,
+    data: userDetails,
   } = useFetch(getSubjects);
 
   useEffect(() => {
-    const fetchSubjects = async () => {
+    const fetchGroups = async () => {
       try {
-        await getSubjectsFn();
+        await getGroupsFn();
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchSubjects();
+    fetchGroups();
   }, [pathName]);
+
+  console.log("groups", userDetails);
 
   return (
     <Sidebar {...props} variant="floating">
@@ -192,13 +194,13 @@ export function AppSidebar(props) {
               <SidebarMenuItem className="flex items-center justify-center">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               </SidebarMenuItem>
-            ) : subjects?.length > 0 ? (
-              subjects.map((subject) => (
-                <SidebarMenuItem key={subject.id}>
+            ) : userDetails?.groups?.length > 0 ? (
+              userDetails?.groups.map((group) => (
+                <SidebarMenuItem key={group.group.id}>
                   <SidebarMenuButton asChild>
-                    <Link href={`/dashboard/subject/${subject.id}`}>
+                    <Link href={`/dashboard/group/${group.group.id}`}>
                       <Users />
-                      <span>{subject.code}</span>
+                      <span>{group.group.groupName}</span>
                     </Link>
                   </SidebarMenuButton>
                   <DropdownMenu>
@@ -213,7 +215,7 @@ export function AppSidebar(props) {
                       side="bottom"
                       align="end"
                     >
-                      <Link href={`/dashboard/subject/${subject.id}`}>
+                      <Link href={`/dashboard/subject/${group.id}`}>
                         <DropdownMenuItem className="space-x-3">
                           <UserMinus className="text-muted-foreground w-4 h-4" />
                           <span>Leave Group</span>
