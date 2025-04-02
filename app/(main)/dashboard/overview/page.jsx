@@ -48,7 +48,7 @@ const Dashboard = () => {
     };
 
     fetchGroups();
-  }, [pathName]);
+  }, []);
   console.log(userDetails);
   return (
     <div

@@ -31,8 +31,8 @@ const SubjectsPage = () => {
     };
 
     fetchGroups();
-  }, [pathName]);
-  console.log(userDetails);
+  }, []);
+  console.log("user", userDetails);
 
   return (
     <div className="p-6 bg-zinc-950 text-zinc-100 min-h-screen">
