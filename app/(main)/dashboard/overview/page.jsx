@@ -13,10 +13,12 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
+  Activity,
   ArrowLeft,
   Bell,
   Book,
   Clock,
+  Loader2,
   MessageSquare,
   UserPlus,
 } from "lucide-react";
@@ -25,6 +27,8 @@ import { getSubjects } from "@/action/getSubjects";
 import useFetch from "@/hooks/createSubject";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
+import { getUserRecentActivity } from "@/action/getUserRecentActivity";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Dashboard = () => {
   const { user } = useUser();
@@ -38,18 +42,26 @@ const Dashboard = () => {
     data: userDetails,
   } = useFetch(getSubjects);
 
+  const {
+    loading: activityLoading,
+    fn: getActivityFn,
+    data: userActivity,
+  } = useFetch(getUserRecentActivity);
+
   useEffect(() => {
-    const fetchGroups = async () => {
+    const fetchData = async () => {
       try {
-        await getGroupsFn();
+        await Promise.all([getGroupsFn(), getActivityFn()]);
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchGroups();
-  }, []);
-  console.log(userDetails);
+    fetchData();
+  }, []); // Runs only once on mount
+
+  console.log("User Details: ", userDetails);
+  console.log("User Activity: ", userActivity);
   return (
     <div
       className="p-3 sm:p-4 md:p-6 bg-zinc-950 text-zinc-100"
@@ -167,59 +179,52 @@ const Dashboard = () => {
           </div>
         </div>
         {/* Recent Activity */}
-        {/* <div>
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-zinc-200">Recent Activity</h2>
-          <Button
-            variant="ghost"
-            className="text-amber-500 hover:text-amber-400 hover:bg-zinc-900"
-          >
-            See All
-          </Button>
-        </div>
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-zinc-200">Recent Activity</h2>
+            {/* <Button
+              variant="ghost"
+              className="text-amber-500 hover:text-amber-400 hover:bg-zinc-900"
+            >
+              See All
+            </Button> */}
+          </div>
 
-        <Card className="bg-zinc-900 border-zinc-800">
-          <CardContent className="p-0">
-            {[
-              {
-                icon: <Bell />,
-                text: "New announcement in FOC: 'Upcoming Project Guidelines'",
-                time: "10 min ago",
-              },
-              {
-                icon: <MessageSquare />,
-                text: "Jennifer replied to your question in ADBS forum",
-                time: "2 hours ago",
-              },
-              {
-                icon: <Book />,
-                text: "New learning materials added to ACA module 4",
-                time: "Yesterday",
-              },
-              {
-                icon: <UserPlus />,
-                text: "Professor Williams joined Data Structures forum",
-                time: "Yesterday",
-              },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className={`flex items-start p-4 ${
-                  index !== 3 ? "border-b border-zinc-800" : ""
-                }`}
-              >
-                <div className="mr-3 mt-1 p-2 bg-zinc-800 rounded-md text-amber-500">
-                  {item.icon}
-                </div>
-                <div className="flex-1">
-                  <p className="text-zinc-300">{item.text}</p>
-                  <p className="text-zinc-500 text-sm">{item.time}</p>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div> */}
+          {activityLoading ? (
+            <div className="flex justify-center items-center">
+              <Loader2 className="animate-spin h-10 w-10 text-zinc-100" />
+            </div>
+          ) : (
+            <Card className="bg-zinc-900 border-zinc-800">
+              <ScrollArea className="h-60">
+                {" "}
+                {/* Adjust height as needed */}
+                <CardContent className="p-0">
+                  {userActivity?.map((activity, index) => (
+                    <div
+                      key={index}
+                      className={`flex items-start p-4 ${
+                        index !== userActivity.length - 1
+                          ? "border-b border-zinc-800"
+                          : ""
+                      }`}
+                    >
+                      <div className="mr-3 mt-1 p-2 bg-zinc-800 rounded-md text-amber-500">
+                        <Activity />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-zinc-300">{activity?.activity}</p>
+                        <p className="text-zinc-500 text-sm">
+                          {new Date(activity?.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </ScrollArea>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   );

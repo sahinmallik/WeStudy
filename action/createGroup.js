@@ -36,6 +36,21 @@ export async function createGroup(data) {
         },
       });
 
+      await tx.groupRecentActivity.create({
+        data: {
+          groupId: group.id,
+          userId: user.id,
+          activity: "Group Created By " + user.name,
+        },
+      });
+
+      await tx.userRecentActivity.create({
+        data: {
+          userId: user.id,
+          activity: "You have Created a Group - " + data.name,
+        },
+      });
+
       return group;
     });
     console.log("Group created successfully:", result);

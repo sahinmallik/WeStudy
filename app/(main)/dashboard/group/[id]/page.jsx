@@ -8,6 +8,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -28,6 +37,7 @@ import {
   Loader2,
   Menu,
   ChevronDown,
+  Activity,
 } from "lucide-react";
 import Link from "next/link";
 import { FileUpload } from "@/components/ui/file-upload";
@@ -48,6 +58,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getGroupRecentActivity } from "@/action/getGroupRecentActivity";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { GroupAddSchema } from "@/app/lib/groupAddSchema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { addUserToGroup } from "@/action/addUserToGroup";
+import { toast } from "sonner";
 
 const SubjectDetailPage = ({ params }) => {
   const { id } = use(params);
@@ -57,22 +74,72 @@ const SubjectDetailPage = ({ params }) => {
     loading: groupLoading,
     fn: getgroupByIdFn,
   } = useFetch(getSubjectsById);
+
+  const {
+    data: groupActivity,
+    loading: groupActivityLoading,
+    fn: getGroupActivityFn,
+  } = useFetch(getGroupRecentActivity);
+
+  const {
+    data: addingUserData,
+    loading: addingUserLoading,
+    fn: addUserToGroupFn,
+  } = useFetch(addUserToGroup);
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false); // New state for modal
 
   useEffect(() => {
-    const fetchSubjectById = async () => {
+    const fetchData = async () => {
+      if (!id) return;
+
       try {
-        if (id) {
-          await getgroupByIdFn(id);
-        }
+        await Promise.all([getgroupByIdFn(id), getGroupActivityFn(id)]);
       } catch (error) {
         console.error(error);
       }
     };
-    fetchSubjectById();
-  }, []);
-  console.log(id);
-  console.log("group", group);
+
+    fetchData();
+  }, [id]);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset, // Add reset function
+    watch,
+  } = useForm({
+    resolver: zodResolver(GroupAddSchema),
+  });
+
+  const onSubmit = async (values) => {
+    try {
+      await addUserToGroupFn(id, values);
+    } catch (error) {
+      console.error("Error adding user:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (addingUserData?.success && !addingUserLoading) {
+      getgroupByIdFn(id);
+      getGroupActivityFn(id);
+      setValue("email", "");
+      setIsAddUserModalOpen(false);
+      reset();
+      toast.success(addingUserData?.message || "User added successfully.");
+    } else if (
+      addingUserData &&
+      !addingUserData?.success &&
+      !addingUserLoading
+    ) {
+      toast.error(addingUserData?.message || "Failed to add user.");
+    }
+  }, [addingUserData, addingUserLoading]);
+
   // Sample subject data
   const subject = {
     code: "ADBS",
@@ -184,8 +251,6 @@ const SubjectDetailPage = ({ params }) => {
         return "Documents";
       case "upload":
         return "Upload";
-      case "addUsers":
-        return "Add Users";
       default:
         return "Overview";
     }
@@ -231,13 +296,57 @@ const SubjectDetailPage = ({ params }) => {
                 </Badge>
               </div>
             </div>
-            <Button
-              onClick={() => setActiveTab("addUsers")}
-              className="bg-amber-600 hover:bg-amber-700 text-zinc-950 w-full sm:w-auto"
+            <Dialog
+              open={isAddUserModalOpen}
+              onOpenChange={setIsAddUserModalOpen}
             >
-              <UserPlus className="h-4 w-4 mr-2" />
-              Add User
-            </Button>
+              <DialogTrigger asChild>
+                <Button className="bg-amber-600 hover:bg-amber-700 text-zinc-950 w-full sm:w-auto">
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Add User
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Add User</DialogTitle>
+                  <DialogDescription>
+                    The student must have a valid weStudy account.
+                  </DialogDescription>
+                </DialogHeader>
+                {/* Form starts here */}
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="grid gap-2 py-4"
+                >
+                  <div className="grid grid-cols-4 items-center gap-2">
+                    <Label htmlFor="email" className="text-right">
+                      Email
+                    </Label>
+                    <Input
+                      id="email"
+                      className="col-span-3"
+                      {...register("email")}
+                      type="email"
+                      placeholder="Enter the email..."
+                    />
+                  </div>
+                  {errors.email && (
+                    <p className="text-red-500 text-sm">
+                      {errors.email.message}
+                    </p>
+                  )}
+                  {/* Submit button inside form */}
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      className="bg-amber-600 hover:bg-amber-700"
+                    >
+                      Add User
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
 
           {/* Tabs */}
@@ -298,16 +407,6 @@ const SubjectDetailPage = ({ params }) => {
                   >
                     Upload
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className={`${
-                      activeTab === "addUsers"
-                        ? "bg-amber-600 text-zinc-950"
-                        : ""
-                    }`}
-                    onClick={() => handleTabChange("addUsers")}
-                  >
-                    Add User
-                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -338,12 +437,6 @@ const SubjectDetailPage = ({ params }) => {
                   className="flex-shrink-0 p-4 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
                 >
                   Upload
-                </TabsTrigger>
-                <TabsTrigger
-                  value="addUsers"
-                  className="flex-shrink-0 p-4 text-sm rounded-md data-[state=active]:bg-amber-600 data-[state=active]:text-zinc-950"
-                >
-                  Add Users
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -439,6 +532,56 @@ const SubjectDetailPage = ({ params }) => {
                   </Card>
                 </div>
               </div>
+              <div>
+                <div className="flex justify-between items-center mb-4 mt-4">
+                  <h2 className="text-xl font-bold text-zinc-200">
+                    Recent Activity
+                  </h2>
+                  {/* <Button
+              variant="ghost"
+              className="text-amber-500 hover:text-amber-400 hover:bg-zinc-900"
+            >
+              See All
+            </Button> */}
+                </div>
+
+                {groupActivityLoading ? (
+                  <div className="flex justify-center items-center">
+                    <Loader2 className="animate-spin h-10 w-10 text-zinc-100" />
+                  </div>
+                ) : (
+                  <Card className="bg-zinc-900 border-zinc-800">
+                    <ScrollArea className="h-40">
+                      {" "}
+                      {/* Adjust height as needed */}
+                      <CardContent className="p-0">
+                        {groupActivity?.map((activity, index) => (
+                          <div
+                            key={index}
+                            className={`flex items-start p-4 ${
+                              index !== groupActivity.length - 1
+                                ? "border-b border-zinc-800"
+                                : ""
+                            }`}
+                          >
+                            <div className="mr-3 mt-1 p-2 bg-zinc-800 rounded-md text-amber-500">
+                              <Activity />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-zinc-300">
+                                {activity?.activity}
+                              </p>
+                              <p className="text-zinc-500 text-sm">
+                                {new Date(activity?.createdAt).toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </ScrollArea>
+                  </Card>
+                )}
+              </div>
             </TabsContent>
 
             {/* Students Tab Content */}
@@ -446,7 +589,7 @@ const SubjectDetailPage = ({ params }) => {
               <Card className="bg-zinc-900 border-zinc-800">
                 <CardHeader>
                   <div className="flex items-center justify-between flex-col sm:flex-row gap-4">
-                    <CardTitle className="text-zinc-100">
+                    <CardTitle className="text-zinc-60">
                       {/* Enrolled Students ({subjects?.emails.length}) */}
                     </CardTitle>
                     <div className="relative w-full sm:w-auto">
@@ -465,11 +608,17 @@ const SubjectDetailPage = ({ params }) => {
                         key={user.user.id}
                         className="flex items-center p-3 bg-zinc-800 rounded-md"
                       >
-                        {/* <Avatar className="h-10 w-10 mr-3 flex-shrink-0">
+                        <Avatar className="h-10 w-10 mr-3 flex-shrink-0">
                           <AvatarFallback className="bg-amber-900 text-amber-100">
-                            {student.avatar}
+                            <Image
+                              src={user.user.imageUrl}
+                              alt={user.user.name}
+                              width={40}
+                              height={40}
+                              className="rounded-full"
+                            />
                           </AvatarFallback>
-                        </Avatar> */}
+                        </Avatar>
                         <div className="flex-1 min-w-0">
                           <p className="text-zinc-200 font-medium truncate">
                             {user.user.name}
@@ -612,42 +761,6 @@ const SubjectDetailPage = ({ params }) => {
                     <Button className="bg-amber-600 hover:bg-amber-700 text-zinc-950 w-full">
                       <Upload className="h-4 w-4 mr-2" />
                       Upload Document
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Add Student Tab Content */}
-            <TabsContent value="addUsers" className="pt-2">
-              <Card className="bg-zinc-900 border-zinc-800">
-                <CardHeader>
-                  <CardTitle className="text-zinc-100">
-                    Add Student to {subject.code}
-                  </CardTitle>
-                  <CardDescription className="text-zinc-400">
-                    Add new users to the Group
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col gap-6">
-                    <div className="grid w-full gap-2">
-                      <Label htmlFor="student-email" className="text-zinc-300">
-                        Student Email
-                      </Label>
-                      <Input
-                        id="student-email"
-                        placeholder="Enter student email address"
-                        className="bg-zinc-800 border-zinc-700 text-zinc-300"
-                      />
-                      <p className="text-zinc-500 text-xs mt-1">
-                        The student must have a valid weStudy account
-                      </p>
-                    </div>
-
-                    <Button className="bg-amber-600 hover:bg-amber-700 text-zinc-950">
-                      <UserPlus className="h-4 w-4 mr-2" />
-                      Add Student
                     </Button>
                   </div>
                 </CardContent>

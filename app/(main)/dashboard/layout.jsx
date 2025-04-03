@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import DashBoardHeader from "@/components/DashBoardHeader";
+import { Toaster } from "sonner";
 
 export default function Layout({ children }) {
   return (
@@ -12,6 +13,7 @@ export default function Layout({ children }) {
       <AppSidebar />
       <SidebarInset>
         <DashBoardHeader />
+        <Toaster />
         {children}
       </SidebarInset>
     </SidebarProvider>
