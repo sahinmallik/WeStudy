@@ -38,6 +38,7 @@ import {
   Menu,
   ChevronDown,
   Activity,
+  Loader,
 } from "lucide-react";
 import Link from "next/link";
 import { FileUpload } from "@/components/ui/file-upload";
@@ -65,10 +66,36 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addUserToGroup } from "@/action/addUserToGroup";
 import { toast } from "sonner";
-
+import { app } from "@/firebaseConfig";
+import { doc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { useUser } from "@clerk/nextjs";
+import { GenerateRandomString } from "@/app/_utils/GenerateRandomString";
+import { useRouter } from "next/navigation";
+import { addDocumentToGroup } from "@/action/addDocumentToGroup";
 const SubjectDetailPage = ({ params }) => {
+  const { user } = useUser();
   const { id } = use(params);
   const [activeTab, setActiveTab] = useState("overview");
+  const [error, setError] = useState(null);
+  const [file, setFile] = useState();
+  const [progress, setProgress] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const handleFileData = (file) => {
+    file.map((file) => {
+      if (file && file.size > 2 * 1024 * 1024) {
+        toast.error("File size should be less than 2MB.");
+        return;
+      }
+      setFile(file);
+    });
+  };
+
   const {
     data: group,
     loading: groupLoading,
@@ -86,6 +113,11 @@ const SubjectDetailPage = ({ params }) => {
     loading: addingUserLoading,
     fn: addUserToGroupFn,
   } = useFetch(addUserToGroup);
+  const {
+    data: addingDocumentData,
+    loading: documentLoading,
+    fn: addDocumentToGroupFn,
+  } = useFetch(addDocumentToGroup);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false); // New state for modal
@@ -139,6 +171,85 @@ const SubjectDetailPage = ({ params }) => {
       toast.error(addingUserData?.message || "Failed to add user.");
     }
   }, [addingUserData, addingUserLoading]);
+
+  useEffect(() => {
+    if (addingDocumentData?.success && !documentLoading) {
+      getgroupByIdFn(id);
+      getGroupActivityFn(id);
+      setFile(null);
+      setProgress(0);
+      toast.success(addingDocumentData?.message || "File added successfully.");
+    } else if (
+      addingDocumentData &&
+      !addingDocumentData?.success &&
+      !documentLoading
+    ) {
+      toast.error(addingDocumentData?.message || "Failed to add file.");
+    }
+  }, [addingDocumentData, documentLoading]);
+
+  const router = useRouter();
+  const storage = getStorage(app);
+  const db = getFirestore(app);
+  const uploadFile = async (file) => {
+    setLoading(true);
+    try {
+      const docRef = ref(storage, "Documents");
+      const spaceRef = ref(docRef, file.name);
+      const uploadTask = uploadBytesResumable(spaceRef, file, file.type);
+
+      uploadTask.on("state_changed", (snapshot) => {
+        const newProgress = Math.floor(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setProgress(newProgress);
+        console.log(progress);
+        newProgress === 100 &&
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("File available at", downloadURL); // Set fileId in state
+            saveInfo(file, downloadURL);
+          });
+      });
+
+      await uploadTask;
+
+      setError(null); // Reset error on successful upload
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveInfo = async (file, fileUrl) => {
+    if (!file || !fileUrl || !user || !id || !group) {
+      console.error("Missing required data");
+      return;
+    }
+
+    const docId = GenerateRandomString();
+
+    try {
+      const fileData = {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+        fileUrl: fileUrl,
+        userEmail: user?.primaryEmailAddress?.emailAddress || "",
+        userName: user?.fullName || "",
+        groupId: id,
+        groupName: group?.groupName || "",
+        id: docId,
+        createdAt: serverTimestamp(),
+      };
+      await setDoc(doc(db, "files", docId), fileData);
+      await addDocumentToGroupFn(id, docId);
+    } catch (error) {
+      console.error("Failed to save file info or link to group:", error);
+    }
+  };
 
   // Sample subject data
   const subject = {
@@ -738,30 +849,34 @@ const SubjectDetailPage = ({ params }) => {
                     Upload Document
                   </CardTitle>
                   <CardDescription className="text-zinc-400">
-                    Upload new documents for the course
+                    Upload new documents for the group
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-col gap-6">
-                    <div className="grid w-full gap-2">
-                      <Label htmlFor="document-title" className="text-zinc-300">
-                        Document Title
-                      </Label>
-                      <Input
-                        id="document-title"
-                        placeholder="Enter document title"
-                        className="bg-zinc-800 border-zinc-700 text-zinc-300"
-                      />
-                    </div>
-
                     <div className="w-full max-w-4xl mx-auto min-h-96 border border-dashed border-neutral-200 dark:border-neutral-800 rounded-lg">
-                      <FileUpload />
+                      <FileUpload onChange={handleFileData} />
                     </div>
 
-                    <Button className="bg-amber-600 hover:bg-amber-700 text-zinc-950 w-full">
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload Document
-                    </Button>
+                    {loading || documentLoading ? (
+                      <Button
+                        className="bg-amber-600 hover:bg-amber-700 text-zinc-950 w-full"
+                        onClick={() => uploadFile(file)}
+                        disabled={!file}
+                      >
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Uploading ...
+                      </Button>
+                    ) : (
+                      <Button
+                        className="bg-amber-600 hover:bg-amber-700 text-zinc-950 w-full"
+                        onClick={() => uploadFile(file)}
+                        disabled={!file}
+                      >
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload Document
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>

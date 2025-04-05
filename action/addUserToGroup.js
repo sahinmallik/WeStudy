@@ -50,6 +50,15 @@ export async function addUserToGroup(groupId, data) {
         },
       });
 
+      await tx.group.update({
+        where: {
+          id: group.id,
+        },
+        data: {
+          userCount: group.userCount + 1,
+        },
+      });
+
       await tx.groupRecentActivity.create({
         data: {
           groupId: group.id,
