@@ -18,8 +18,8 @@ const ZegoRoomClient = ({ roomid }) => {
       appID,
       serverSecret,
       roomid,
-      user.id,
-      user.fullName || "Guest"
+      user?.id,
+      user?.fullName || "Guest"
     );
 
     const zp = ZegoUIKitPrebuilt.create(kitToken);
