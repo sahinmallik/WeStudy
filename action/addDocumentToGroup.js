@@ -24,16 +24,31 @@ export async function addDocumentToGroup(groupId, data) {
     const result = await db.$transaction(async (tx) => {
       // Add document to the group
 
-      const document = await tx.group.update({
-        where: {
-          id: group.id,
-        },
+      const document = await tx.document.create({
         data: {
-          documents: {
-            push: data,
-          },
+          userId: user.id,
+          groupId: groupId,
+          filename: data.filename,
+          fileurl: data.fileurl,
+          filetype: data.filetype,
+          filesize: data.filesize,
         },
       });
+
+      const userRecentActivity = await tx.userRecentActivity.create({
+        data: {
+          userId: user.id,
+          activity: "You have added a document to " + group.groupName,
+        },
+      });
+      const groupRecentActivity = await tx.groupRecentActivity.create({
+        data: {
+          groupId: groupId,
+          userId: user.id,
+          activity: user.name + " has added a document",
+        },
+      });
+
       return document;
     });
 

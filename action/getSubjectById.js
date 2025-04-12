@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { doc } from "firebase/firestore";
 
 export async function getSubjectsById(id) {
   const { userId } = await auth();
@@ -15,11 +16,14 @@ export async function getSubjectsById(id) {
         users: {
           include: { user: true },
         },
+        documents: {
+          include: { user: true, group: true },
+        },
       },
     });
 
     if (!group) throw new Error("Group not found");
-
+    console.log(group);
     return group;
   } catch (error) {
     console.error("Error fetching subject:", error.message);

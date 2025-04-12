@@ -50,11 +50,7 @@ const SubjectsPage = () => {
         </Link>
       </div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-zinc-100">My Subjects</h1>
-        <p className="text-zinc-400">
-          Currently You are in {userDetails?.groups?.length} subjects. Keep up
-          the good work!
-        </p>
+        <h1 className="text-3xl font-bold text-zinc-100">My Groups</h1>
       </div>
 
       {/* Subjects Grid */}

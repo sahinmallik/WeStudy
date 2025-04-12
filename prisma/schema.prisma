@@ -24,7 +24,8 @@ model User {
 
   groups GroupAdded[]
   userRecentActivity  UserRecentActivity[]
-  groupRecentActivity GroupRecentActivity[] 
+  groupRecentActivity GroupRecentActivity[]
+  documents           Document[] 
 
   @@index([clerkUserId]) // ✅ Index for faster user lookup
 }
@@ -35,13 +36,13 @@ model Group {
   tag            String
   specialization String
   userCount      Int // ✅ Changed from BigInt to Int (faster)
-  documents      String[]
   videoUrl       String   @default("")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   users               GroupAdded[]
   GroupRecentActivity GroupRecentActivity[]
+  documents           Document[]
 
   @@index([id])
   @@index([tag]) // ✅ Optimized filtering by tag
@@ -86,4 +87,20 @@ model GroupRecentActivity {
   @@index([groupId])
 }
 
+model Document{
+  id        String      @id @default(cuid())
+  userId    String
+  groupId   String
+  filename  String
+  filesize  Int
+  filetype  String
+  fileurl   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group  Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  
+  @@index([userId,groupId])
+  
+}
 

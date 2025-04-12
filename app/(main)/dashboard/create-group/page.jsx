@@ -100,13 +100,7 @@ export default function GlowingFormCard() {
   };
   useEffect(() => {
     if (updateResult?.success && !updateLoading) {
-      toast("Event has been created", {
-        description: "Sunday, December 03, 2023 at 9:00 AM",
-        action: {
-          label: "Undo",
-          onClick: () => console.log("Undo"),
-        },
-      });
+      toast.success("Group has been created");
       router.replace("/dashboard/groups"); // Replaces the current page in history
       router.refresh();
     }

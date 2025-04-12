@@ -228,123 +228,20 @@ const SubjectDetailPage = ({ params }) => {
       console.error("Missing required data");
       return;
     }
-
-    const docId = GenerateRandomString();
-
     try {
       const fileData = {
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type,
-        fileUrl: fileUrl,
-        userEmail: user?.primaryEmailAddress?.emailAddress || "",
-        userName: user?.fullName || "",
-        groupId: id,
-        groupName: group?.groupName || "",
-        id: docId,
-        createdAt: serverTimestamp(),
+        filename: file.name,
+        filesize: file.size,
+        filetype: file.type,
+        fileurl: fileUrl,
       };
-      await setDoc(doc(db, "files", docId), fileData);
-      await addDocumentToGroupFn(id, docId);
+      await addDocumentToGroupFn(id, fileData);
     } catch (error) {
       console.error("Failed to save file info or link to group:", error);
     }
   };
 
   // Sample subject data
-  const subject = {
-    code: "ADBS",
-    name: "Advanced Database Systems",
-    instructor: "Dr. Michael Chen",
-    description:
-      "This course covers advanced topics in database management systems including database design, transaction processing, concurrency control, and distributed databases.",
-    meetingLink: "https://westudy.meet/adbs-2025-spring",
-    students: [
-      {
-        id: 1,
-        name: "John Smith",
-        email: "john.smith@westudy.edu",
-        avatar: "JS",
-      },
-      { id: 2, name: "Emma Wilson", email: "emma.w@westudy.edu", avatar: "EW" },
-      { id: 3, name: "Ryan Kim", email: "ryan.kim@westudy.edu", avatar: "RK" },
-      {
-        id: 4,
-        name: "Aisha Patel",
-        email: "a.patel@westudy.edu",
-        avatar: "AP",
-      },
-      {
-        id: 5,
-        name: "Michael Brown",
-        email: "m.brown@westudy.edu",
-        avatar: "MB",
-      },
-      {
-        id: 6,
-        name: "Sofia Garcia",
-        email: "s.garcia@westudy.edu",
-        avatar: "SG",
-      },
-      { id: 7, name: "David Lee", email: "d.lee@westudy.edu", avatar: "DL" },
-      {
-        id: 8,
-        name: "Olivia Turner",
-        email: "o.turner@westudy.edu",
-        avatar: "OT",
-      },
-    ],
-    documents: [
-      {
-        id: 1,
-        name: "Course Syllabus.pdf",
-        size: "0.5 MB",
-        uploadedBy: "Dr. Michael Chen",
-        date: "Mar 15, 2025",
-      },
-      {
-        id: 2,
-        name: "Lecture 1 - Introduction to ADBS.pptx",
-        size: "2.3 MB",
-        uploadedBy: "Dr. Michael Chen",
-        date: "Mar 17, 2025",
-      },
-      {
-        id: 3,
-        name: "Lecture 2 - Database Design.pdf",
-        size: "1.8 MB",
-        uploadedBy: "Dr. Michael Chen",
-        date: "Mar 19, 2025",
-      },
-      {
-        id: 4,
-        name: "Assignment 1 - ER Diagrams.docx",
-        size: "0.7 MB",
-        uploadedBy: "Dr. Michael Chen",
-        date: "Mar 20, 2025",
-      },
-      {
-        id: 5,
-        name: "Lab 1 - SQL Advanced Queries.pdf",
-        size: "1.1 MB",
-        uploadedBy: "Dr. Michael Chen",
-        date: "Mar 22, 2025",
-      },
-    ],
-    upcomingEvents: [
-      {
-        name: "Lecture: Transaction Processing",
-        date: "Apr 2, 2025",
-        time: "10:00 AM - 11:30 AM",
-      },
-      { name: "Assignment 2 Due", date: "Apr 5, 2025", time: "11:59 PM" },
-      {
-        name: "Lab Session: Indexing",
-        date: "Apr 7, 2025",
-        time: "2:00 PM - 4:00 PM",
-      },
-    ],
-  };
 
   // Function to handle tab change from dropdown
   const handleTabChange = (tab) => {
@@ -566,17 +463,19 @@ const SubjectDetailPage = ({ params }) => {
                       <div className="bg-zinc-800 p-3 rounded-md font-mono text-sm text-zinc-300 overflow-x-auto">
                         <code>{group?.videoUrl}</code>
                       </div>
-                      <Button className="bg-amber-600 hover:bg-amber-700 text-zinc-950">
-                        <Video className="h-4 w-4 mr-2" />
-                        Join Meeting
-                      </Button>
+                      <Link href={`/room/${group?.videoUrl}`} target="_blank">
+                        <Button className="bg-amber-600 hover:bg-amber-700 text-zinc-950">
+                          <Video className="h-4 w-4 mr-2" />
+                          Join Meeting
+                        </Button>
+                      </Link>
                     </CardContent>
                   </Card>
 
                   <Card className="bg-zinc-900 border-zinc-800">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                       <CardTitle className="text-zinc-100">
-                        Course Documents
+                        Group Documents
                       </CardTitle>
                       <Button
                         variant="ghost"
@@ -589,29 +488,47 @@ const SubjectDetailPage = ({ params }) => {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        {subject.documents.slice(0, 3).map((doc) => (
-                          <div
-                            key={doc.id}
-                            className="flex items-center justify-between py-2 border-b border-zinc-800"
-                          >
-                            <div className="flex items-center">
-                              <FileText className="h-4 w-4 mr-3 text-zinc-500" />
-                              <div>
-                                <p className="text-zinc-300">{doc.name}</p>
-                                <p className="text-zinc-500 text-xs">
-                                  {doc.size} • {doc.date}
-                                </p>
-                              </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="text-zinc-400 hover:text-zinc-100"
+                        {group?.documents && group.documents.length > 0 ? (
+                          group.documents.slice(0, 3).map((doc) => (
+                            <div
+                              key={doc.id}
+                              className="flex items-center justify-between py-2 border-b border-zinc-800"
                             >
-                              <Download className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        ))}
+                              <div className="flex items-center">
+                                <FileText className="h-4 w-4 mr-3 text-zinc-500" />
+                                <div>
+                                  <p className="text-zinc-300">
+                                    {doc.filename}
+                                  </p>
+                                  <p className="text-zinc-500 text-xs">
+                                    {Math.round(
+                                      (doc.filesize / 1024 / 1024) * 100
+                                    ) /
+                                      100 +
+                                      " MB"}{" "}
+                                    •{" "}
+                                    {new Date(
+                                      doc.createdAt
+                                    ).toLocaleDateString()}
+                                  </p>
+                                </div>
+                              </div>
+                              <a href={doc.fileurl} download>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="text-zinc-400 hover:text-zinc-100"
+                                >
+                                  <Download className="h-4 w-4" />
+                                </Button>
+                              </a>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-zinc-500 text-sm">
+                            No documents available.
+                          </p>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -621,7 +538,7 @@ const SubjectDetailPage = ({ params }) => {
                   <Card className="bg-zinc-900 border-zinc-800">
                     <CardHeader>
                       <CardTitle className="text-zinc-100">
-                        Class Stats
+                        Group Stats
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -630,7 +547,7 @@ const SubjectDetailPage = ({ params }) => {
                           <p className="text-3xl font-bold text-amber-500">
                             {group?.userCount}
                           </p>
-                          <p className="text-zinc-400 text-sm">Students</p>
+                          <p className="text-zinc-400 text-sm">Members</p>
                         </div>
                         <div className="bg-zinc-800 p-4 rounded-md text-center">
                           <p className="text-3xl font-bold text-amber-500">
@@ -741,7 +658,7 @@ const SubjectDetailPage = ({ params }) => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="text-zinc-400 hover:text-zinc-100 flex-shrink-0"
+                          className="text-zinc-400 hover:text-zinc-100"
                         >
                           <Users className="h-4 w-4" />
                         </Button>
@@ -758,7 +675,7 @@ const SubjectDetailPage = ({ params }) => {
                 <CardHeader>
                   <div className="flex items-center justify-between flex-col sm:flex-row gap-4">
                     <CardTitle className="text-zinc-100">
-                      Course Documents ({subject.documents.length})
+                      Group Documents ({group?.documents.length})
                     </CardTitle>
                     <div className="relative w-full sm:w-auto">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" />
@@ -771,71 +688,78 @@ const SubjectDetailPage = ({ params }) => {
                 </CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
-                    <Table className="w-full min-w-[600px]">
-                      <TableHeader>
-                        <TableRow className="bg-zinc-800">
-                          <TableHead className="text-left p-3 text-zinc-400 font-medium">
-                            Document Name
-                          </TableHead>
-                          <TableHead className="text-left p-3 text-zinc-400 font-medium hidden sm:table-cell">
-                            Size
-                          </TableHead>
-                          <TableHead className="text-left p-3 text-zinc-400 font-medium hidden md:table-cell">
-                            Uploaded By
-                          </TableHead>
-                          <TableHead className="text-left p-3 text-zinc-400 font-medium hidden sm:table-cell">
-                            Date
-                          </TableHead>
-                          <TableHead className="text-left p-3 text-zinc-400 font-medium">
-                            Actions
-                          </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {subject.documents.map((doc) => (
-                          <TableRow
-                            key={doc.id}
-                            className="border-t border-zinc-800 hover:bg-zinc-800/50"
-                          >
-                            <TableCell className="p-3">
-                              <div className="flex items-center">
-                                <File className="h-4 w-4 mr-2 text-zinc-500" />
-                                <span className="text-zinc-300 truncate max-w-[150px] sm:max-w-none">
-                                  {doc.name}
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell className="p-3 text-zinc-400 hidden sm:table-cell">
-                              {doc.size}
-                            </TableCell>
-                            <TableCell className="p-3 text-zinc-400 hidden md:table-cell">
-                              {doc.uploadedBy}
-                            </TableCell>
-                            <TableCell className="p-3 text-zinc-400 hidden sm:table-cell">
-                              {doc.date}
-                            </TableCell>
-                            <TableCell className="p-3">
-                              <div className="flex space-x-2">
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="text-zinc-400 h-8 w-8 p-0"
-                                >
-                                  <Download className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="text-zinc-400 h-8 w-8 p-0"
-                                >
-                                  <Link2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
+                    {group?.documents && group.documents.length > 0 ? (
+                      <Table className="w-full min-w-[600px]">
+                        <TableHeader>
+                          <TableRow className="bg-zinc-800">
+                            <TableHead className="text-left p-3 text-zinc-400 font-medium">
+                              Document Name
+                            </TableHead>
+                            <TableHead className="text-left p-3 text-zinc-400 font-medium hidden sm:table-cell">
+                              Size
+                            </TableHead>
+                            <TableHead className="text-left p-3 text-zinc-400 font-medium hidden md:table-cell">
+                              Uploaded By
+                            </TableHead>
+                            <TableHead className="text-left p-3 text-zinc-400 font-medium hidden sm:table-cell">
+                              Date
+                            </TableHead>
+                            <TableHead className="text-left p-3 text-zinc-400 font-medium">
+                              Actions
+                            </TableHead>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                        </TableHeader>
+                        <TableBody>
+                          {group?.documents.map((doc) => (
+                            <TableRow
+                              key={doc.id}
+                              className="border-t border-zinc-800 hover:bg-zinc-800/50"
+                            >
+                              <TableCell className="p-3">
+                                <div className="flex items-center">
+                                  <File className="h-4 w-4 mr-2 text-zinc-500" />
+                                  <span className="text-zinc-300 truncate max-w-[150px] sm:max-w-none">
+                                    {doc.filename}
+                                  </span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="p-3 text-zinc-400 hidden sm:table-cell">
+                                {Math.round(
+                                  (doc.filesize / 1024 / 1024) * 100
+                                ) /
+                                  100 +
+                                  " MB"}
+                              </TableCell>
+                              <TableCell className="p-3 text-zinc-400 hidden md:table-cell">
+                                {doc.user.name}
+                              </TableCell>
+                              <TableCell className="p-3 text-zinc-400 hidden sm:table-cell">
+                                {doc.createdAt
+                                  ? new Date(doc.createdAt).toLocaleDateString()
+                                  : "N/A"}
+                              </TableCell>
+                              <TableCell className="p-3">
+                                <div className="flex space-x-2">
+                                  <a href={doc.fileurl} download>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      className="text-zinc-400 h-8 w-8 p-0"
+                                    >
+                                      <Download className="h-4 w-4" />
+                                    </Button>
+                                  </a>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    ) : (
+                      <p className="text-zinc-500 text-sm">
+                        No documents available.
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>

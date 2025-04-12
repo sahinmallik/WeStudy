@@ -2,6 +2,7 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/prisma";
+import { GenerateRandomString } from "@/app/_utils/GenerateRandomString";
 
 export async function createGroup(data) {
   const { userId } = await auth();
@@ -14,6 +15,8 @@ export async function createGroup(data) {
 
   if (!user) throw new Error("User not found");
 
+  const id = GenerateRandomString();
+
   try {
     const result = await db.$transaction(async (tx) => {
       // Create the group
@@ -23,8 +26,7 @@ export async function createGroup(data) {
           tag: data.subjectTag,
           specialization: data.specialization,
           userCount: 1,
-          documents: [], // JSON field initialized as empty array
-          videoUrl: "",
+          videoUrl: id,
         },
       });
 
