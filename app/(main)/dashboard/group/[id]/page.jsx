@@ -620,13 +620,13 @@ const SubjectDetailPage = ({ params }) => {
                     <CardTitle className="text-zinc-60">
                       {/* Enrolled Students ({subjects?.emails.length}) */}
                     </CardTitle>
-                    <div className="relative w-full sm:w-auto">
+                    {/* <div className="relative w-full sm:w-auto">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" />
                       <Input
                         placeholder="Search users..."
                         className="bg-zinc-800 border-zinc-700 pl-10 w-full sm:w-64 text-zinc-300"
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </CardHeader>
                 <CardContent>
