@@ -463,12 +463,12 @@ const SubjectDetailPage = ({ params }) => {
                       <div className="bg-zinc-800 p-3 rounded-md font-mono text-sm text-zinc-300 overflow-x-auto">
                         <code>{group?.videoUrl}</code>
                       </div>
-                      <Link href={`/room/${group?.videoUrl}`}>
+                      <a href={`/room/${group?.videoUrl}`}>
                         <Button className="bg-amber-600 hover:bg-amber-700 text-zinc-950">
                           <Video className="h-4 w-4 mr-2" />
                           Join Meeting
                         </Button>
-                      </Link>
+                      </a>
                     </CardContent>
                   </Card>
 
