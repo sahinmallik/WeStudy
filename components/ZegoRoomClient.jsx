@@ -1,47 +1,43 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
+import React, { useEffect, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
 
 const ZegoRoomClient = ({ roomid }) => {
   const containerRef = useRef(null);
   const { user } = useUser();
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!user || !roomid) return;
+    const startZegoRoom = async () => {
+      if (!user || !roomid) return;
 
-    const appID = parseInt(process.env.NEXT_PUBLIC_ZEGOCLOUD_APP_ID);
-    const serverSecret = process.env.NEXT_PUBLIC_ZEGOCLOUD_SERVER_SECRET;
+      const { ZegoUIKitPrebuilt } = await import(
+        "@zegocloud/zego-uikit-prebuilt"
+      );
 
-    const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
-      appID,
-      serverSecret,
-      roomid,
-      user?.id,
-      user?.fullName || "Guest"
-    );
+      const appID = Number(process.env.NEXT_PUBLIC_ZEGOCLOUD_APP_ID);
+      const serverSecret = process.env.NEXT_PUBLIC_ZEGOCLOUD_SERVER_SECRET;
 
-    const zp = ZegoUIKitPrebuilt.create(kitToken);
+      const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
+        appID,
+        serverSecret,
+        roomid,
+        user?.id,
+        user?.fullName || "Guest"
+      );
 
-    zp.joinRoom({
-      container: containerRef.current,
-      scenario: {
-        mode: ZegoUIKitPrebuilt.VideoConference,
-      },
-    });
+      const zp = ZegoUIKitPrebuilt.create(kitToken);
 
-    setIsLoading(false); // Stop loading once the room is joined
+      zp.joinRoom({
+        container: containerRef.current,
+        scenario: {
+          mode: ZegoUIKitPrebuilt.VideoConference,
+        },
+      });
+    };
+
+    startZegoRoom();
   }, [roomid, user]);
-
-  if (isLoading || !user) {
-    return (
-      <div className="flex justify-center items-center h-screen text-xl text-gray-600">
-        Loading...
-      </div>
-    ); // Show loading effect
-  }
 
   return <div ref={containerRef} style={{ width: "100vw", height: "100vh" }} />;
 };
