@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    turbopack: true, // enable Turbopack for development
-  },
   images: {
     remotePatterns: [
       {
@@ -15,6 +12,7 @@ const nextConfig = {
       },
     ],
   },
+  transpilePackages: ["@zegocloud/zego-uikit-prebuilt"],
 };
 
 export default nextConfig;
