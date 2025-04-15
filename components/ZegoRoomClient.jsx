@@ -8,11 +8,10 @@ const ZegoRoomClient = ({ roomid }) => {
   const { user } = useUser();
 
   useEffect(() => {
-    const startZegoRoom = async () => {
-      if (!user || !roomid) return;
+    if (!user || !roomid || typeof window === "undefined") return;
 
+    const startZegoRoom = async () => {
       try {
-        // Ensure you're importing only on the client side
         const { ZegoUIKitPrebuilt } = await import(
           "@zegocloud/zego-uikit-prebuilt"
         );
@@ -21,10 +20,11 @@ const ZegoRoomClient = ({ roomid }) => {
         const serverSecret = process.env.NEXT_PUBLIC_ZEGOCLOUD_SERVER_SECRET;
 
         if (!appID || !serverSecret) {
-          console.error("Missing ZEGOCLOUD env variables.");
+          console.error("ZEGOCLOUD env vars are missing");
           return;
         }
 
+        // ✅ Only for development/testing
         const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
           appID,
           serverSecret,
@@ -41,15 +41,13 @@ const ZegoRoomClient = ({ roomid }) => {
             mode: ZegoUIKitPrebuilt.VideoConference,
           },
         });
-      } catch (error) {
-        console.error("Failed to load ZEGOCLOUD room:", error);
+      } catch (err) {
+        console.error("Failed to load ZEGOCLOUD room:", err);
       }
     };
 
-    // Run only on the client (double check)
-    if (typeof window !== "undefined") {
-      startZegoRoom();
-    }
+    // Delay execution slightly (helps avoid hydration timing issues)
+    setTimeout(() => startZegoRoom(), 100);
   }, [roomid, user]);
 
   return <div ref={containerRef} style={{ width: "100vw", height: "100vh" }} />;
