@@ -1,7 +1,7 @@
 "use client";
 
-import { Suspense } from "react";
 import dynamic from "next/dynamic";
+import { Suspense } from "react";
 
 // Use dynamic import with no SSR
 const ZegoRoomClient = dynamic(() => import("@/components/ZegoRoomClient"), {
@@ -13,11 +13,8 @@ const ZegoRoomClient = dynamic(() => import("@/components/ZegoRoomClient"), {
   ),
 });
 
-// Make the page component async and properly handle params
-export default async function RoomPage({ params }) {
-  // Await params if needed (this ensures we follow Next.js guidance)
-  const roomParams = await Promise.resolve(params);
-  const roomid = roomParams.roomid;
+const RoomPage = ({ params }) => {
+  const { roomid } = params;
 
   return (
     <Suspense
@@ -30,4 +27,6 @@ export default async function RoomPage({ params }) {
       <ZegoRoomClient roomid={roomid} />
     </Suspense>
   );
-}
+};
+
+export default RoomPage;

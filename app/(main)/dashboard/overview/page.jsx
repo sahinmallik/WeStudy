@@ -94,10 +94,10 @@ const Dashboard = () => {
           <Card className="bg-zinc-900 border-zinc-800">
             <CardHeader className="pb-2">
               <CardTitle className="text-zinc-300 text-lg">
-                Current Subjects
+                Current Group
               </CardTitle>
               <CardDescription className="text-zinc-500">
-                Courses you're enrolled in
+                Groups you're in!!!
               </CardDescription>
             </CardHeader>
             <CardContent>
